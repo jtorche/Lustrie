@@ -1,4 +1,6 @@
 #include "PlanetGrass.h"
+#include <array>
+#include <algorithm>
 #include <core/Logger.h>
 #include "math/Frustum.h"
 
@@ -11,7 +13,7 @@ PlanetGrass::PlanetGrass(Planet& planet, int seed) : _seed(seed), _planet(planet
 	});
 }
 
-void PlanetGrass::cull(const tim::Camera& camera, eastl::vector<ObjectInstance>& meshs)
+void PlanetGrass::cull(const tim::Camera& camera, std::vector<ObjectInstance>& meshs)
 {
 	Frustum frust;
 	tim::Camera cam = camera;
@@ -106,11 +108,11 @@ void PlanetGrass::generateMeshData(Planet& planet)
 					continue;
 
 				v = planet.evalNoise(v);
-				batch.vertex_normal.push_back(eastl::make_pair(v, 
+				batch.vertex_normal.push_back(std::make_pair(v, 
 					interpolateCos2(precomputedNormal[0][0], precomputedNormal[1][0], precomputedNormal[0][1], precomputedNormal[1][1], r_vec.x(), r_vec.y())));
 
-				for (int a = 0; a < 3; ++a) minB[a] = min(minB[a], v[a]);
-				for (int a = 0; a < 3; ++a) maxB[a] = max(maxB[a], v[a]);
+				for (int a = 0; a < 3; ++a) minB[a] = std::min(minB[a], v[a]);
+				for (int a = 0; a < 3; ++a) maxB[a] = std::max(maxB[a], v[a]);
 			}
 
 			batch.sphere = Sphere((minB + maxB)*0.5f, (minB - maxB).length());
@@ -123,8 +125,8 @@ void PlanetGrass::createMeshBuffers()
 	int sideIndex = 0;
 	for (auto& side : _batchSide)
 	{
-		eastl::array<uint, NB_SPLIT*NB_SPLIT> startIndexOffset;
-		eastl::array<uint, NB_SPLIT*NB_SPLIT> nbIndex;
+		std::array<uint, NB_SPLIT*NB_SPLIT> startIndexOffset;
+		std::array<uint, NB_SPLIT*NB_SPLIT> nbIndex;
 		Mesh sideMesh;
 
 		int indexBatch = 0;

@@ -34,7 +34,7 @@ namespace tim
         return convertToUVMesh([this](float,float,int index){ return _points[index].w(); }, resolution, mergeLast, triangle, uniform_uv);
     }
 
-    void Curve::tesselateCylindre(BaseMesh& mesh, const eastl::vector<uint>& bottom, const eastl::vector<uint>& top, uint resolution, bool triangulate, bool cut)
+    void Curve::tesselateCylindre(BaseMesh& mesh, const std::vector<uint>& bottom, const std::vector<uint>& top, uint resolution, bool triangulate, bool cut)
     {
         const uint res_mod = resolution + (cut ? 1:0);
         for(uint i=0 ; i<resolution ; ++i)
@@ -52,7 +52,7 @@ namespace tim
         }
     }
 
-    void Curve::tesselateCone(BaseMesh& mesh, const eastl::vector<uint>& bottom, uint top, uint resolution, bool cut)
+    void Curve::tesselateCone(BaseMesh& mesh, const std::vector<uint>& bottom, uint top, uint resolution, bool cut)
     {
         const uint res_mod = resolution + (cut ? 1:0);
         for(uint i=0 ; i<resolution ; ++i)
@@ -72,12 +72,12 @@ namespace tim
             return (_points[index + 1].to<3>() - _points[index - 1].to<3>()).normalized();
 	}
 
-    void Curve::aligneCircle(const eastl::vector<eastl::pair<vec3,vec2>>& base, eastl::vector<eastl::pair<vec3,vec2>>& top)
+    void Curve::aligneCircle(const std::vector<std::pair<vec3,vec2>>& base, std::vector<std::pair<vec3,vec2>>& top)
     {
         struct detail
         {
             // the standard formula to compute the variance of a vec3 array
-            static float variance(const eastl::vector<vec3>& vec)
+            static float variance(const std::vector<vec3>& vec)
             {
                 vec3 mean = 0;
                 for(auto v : vec) mean += v;
@@ -94,10 +94,10 @@ namespace tim
             return;
 
         // compute the variance score for each configuration
-        eastl::vector<float> var_score(base.size());
+        std::vector<float> var_score(base.size());
         for(int i=0 ; i<int(base.size()) ; ++i)
         {
-            eastl::vector<vec3> acc;
+            std::vector<vec3> acc;
             for(int j=0 ; j<int(base.size()) ; ++j)
                acc.push_back( (base[j].first - top[(i+j)%base.size()].first) );
             var_score[i] = detail::variance(acc);
@@ -112,7 +112,7 @@ namespace tim
         }
 
         // reorder the points to align them
-        eastl::vector<eastl::pair<vec3,vec2>> old(std::move(top));
+        std::vector<std::pair<vec3,vec2>> old(std::move(top));
         top.resize(base.size());
         for(int i=0 ; i<int(base.size()) ; ++i)
         {

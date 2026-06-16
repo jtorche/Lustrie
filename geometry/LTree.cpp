@@ -1,5 +1,6 @@
 
 #include "LTree.h"
+#include <algorithm>
 
 namespace tim
 {
@@ -12,7 +13,7 @@ LTree::LTree(Parameter parameter, int seed) : _randEngine(seed), _random(0,1)
     for(auto& x : parameter.branchSplitDensity)
         x /= acc;
 
-    parameter.nbTrunkStep = eastl::max(1, parameter.nbTrunkStep);
+    parameter.nbTrunkStep = std::max(1, parameter.nbTrunkStep);
 
     while(parameter.branchEarlyTermination.size() < size_t(parameter.depth))
         parameter.branchEarlyTermination.push_back(parameter.branchEarlyTermination.empty() ? 0:parameter.branchEarlyTermination.back());
@@ -44,7 +45,7 @@ Mesh LTree::generateLeaf(const LeafParameter& leaf) const
     return m;
 }
 
-void LTree::exportOBJ(eastl::string filename) const
+void LTree::exportOBJ(std::string filename) const
 {
     Mesh acc;
     accumulateMesh(acc, _root, 0);
@@ -54,14 +55,14 @@ void LTree::exportOBJ(eastl::string filename) const
 
 LTree::Node* LTree::generateBranchRec(const Parameter& param, Node* parent, vec3 position, vec3 direction, GenParam detailParam)
 {
-    Node* node = &_nodePool.push_back();
+    Node* node = &_nodePool.emplace_back();
     node->parent = parent;
     bool isTrunk = detailParam.isTrunk;
 
     // initialize node
     if(detailParam.needNewCurve)
     {
-        node->curve = &_curvePool.push_back();
+        node->curve = &_curvePool.emplace_back();
         node->curve->addPoint(position, detailParam.thickness);
         node->range.x() = 0;
     }
@@ -191,7 +192,7 @@ LTree::Node* LTree::generateBranchRec(const Parameter& param, Node* parent, vec3
         {
         float nbBranchf = (isTrunk ? param.trunkBranchDensity:param.extraBranchDensity)(_randEngine) * (sizeBranch-param.extraBranchSpacing);
         int nbBranch = int(nbBranchf) + (_random(_randEngine) < fmodf(nbBranchf, 1) ? 1:0);
-        eastl::vector<vec2> alreadyCreatedBranch;
+        std::vector<vec2> alreadyCreatedBranch;
 
         GenParam newGenParam = detailParam;
         newGenParam.needNewCurve = true;
@@ -469,9 +470,9 @@ LTree::MeshingParameter LTree::MeshingParameter::interpolate(const MeshingParame
 	return param;
 }
 
-eastl::vector<float> LTree::Parameter::interpolate(const eastl::vector<float>& v1, const eastl::vector<float>& v2, float coef)
+std::vector<float> LTree::Parameter::interpolate(const std::vector<float>& v1, const std::vector<float>& v2, float coef)
 {
-	eastl::vector<float> v = v1.size() > v2.size() ? v1 : v2;
+	std::vector<float> v = v1.size() > v2.size() ? v1 : v2;
 	for (size_t i = 0; i < std::min(v1.size(), v2.size()); ++i)
 		v[i] = tim::interpolate(v1[i], v2[i], coef);
 

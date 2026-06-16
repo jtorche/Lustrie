@@ -1,4 +1,5 @@
 #include "Graphics.h"
+#include <memory>
 #include "driver/DX12PipelineState.h"
 #include "PlanetSystem.h"
 #include <core/Chrono.h>
@@ -26,16 +27,16 @@ bool Graphics::init(tim::ivec2 res, bool fullscreen, HWND handle)
 	auto ok = _renderer.init(info);
 
 	// create standart root rignature
-	eastl::vector<dx12::RootSignature::RootParameter> rootParameters(2);
+	std::vector<dx12::RootSignature::RootParameter> rootParameters(2);
 	int slot = 0;
 	rootParameters[slot++].setAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_ALL);
 	//rootParameters[slot++].setAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
 
 	rootParameters[slot++].setAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, SIZE_TEXTURE_POOL, D3D12_SHADER_VISIBILITY_PIXEL);
-	eastl::vector<D3D12_STATIC_SAMPLER_DESC> samplers(1);
+	std::vector<D3D12_STATIC_SAMPLER_DESC> samplers(1);
 	samplers[0] = dx12::RootSignature::trilinearWrapSampler(2);
 
-	_standartRootSignature = eastl::make_shared<dx12::RootSignature>(_renderer.device(), rootParameters, samplers);
+	_standartRootSignature = std::make_shared<dx12::RootSignature>(_renderer.device(), rootParameters, samplers);
 
 	// create default texture
 	ImageAlgorithm<float> dummyImg({ 32,32 });
@@ -62,15 +63,15 @@ void Graphics::frame(ControlCamera& camera, PlanetSystem& planet)
 	cam.fov = 70;
 	cam.ratio = _screenResolution.x() / float(_screenResolution.y());
 
-	eastl::vector<ObjectInstance> toDraw;
+	std::vector<ObjectInstance> toDraw;
 	planet.planet->cull(cam, toDraw);
 
-	eastl::vector<ObjectInstance> toDrawGrass;
+	std::vector<ObjectInstance> toDrawGrass;
 	for(const auto& grass : planet.grassOnPlanet)
 		grass->cull(cam, toDrawGrass);
 
-	eastl::vector<ObjectInstance> toDrawPlants, toDrawLeafs;
-	eastl::vector<mat4> plantsModelMatrix, leafModelMatrix;
+	std::vector<ObjectInstance> toDrawPlants, toDrawLeafs;
+	std::vector<mat4> plantsModelMatrix, leafModelMatrix;
 	if(planet.plants)
 		planet.plants->cull(cam, toDrawPlants, toDrawLeafs);
 
@@ -97,7 +98,7 @@ void Graphics::close()
 	_renderer.close();
 }
 
-Material Graphics::createTexturedForwardMaterial(const char* shaderSrc, const eastl::shared_ptr<TexturePool>& pool, bool cullFace, bool wireFrame)
+Material Graphics::createTexturedForwardMaterial(const char* shaderSrc, const std::shared_ptr<TexturePool>& pool, bool cullFace, bool wireFrame)
 {
 	Material mat;
 
@@ -112,13 +113,13 @@ Material Graphics::createTexturedForwardMaterial(const char* shaderSrc, const ea
 	param.wireframe = wireFrame;
 
 	mat._signature = _standartRootSignature;
-	mat._pipeline = eastl::make_shared<dx12::PipelineState>(_renderer.device(), mat._signature->rootSignature(), inLayout, shaderSrc, param);
+	mat._pipeline = std::make_shared<dx12::PipelineState>(_renderer.device(), mat._signature->rootSignature(), inLayout, shaderSrc, param);
 	mat._textures = pool;
 
 	return mat;
 }
 
-Material Graphics::createPointToTriangleGSForwardMaterial(const char* shaderSrc, const eastl::shared_ptr<TexturePool>& pool, bool cullFace, bool wireFrame)
+Material Graphics::createPointToTriangleGSForwardMaterial(const char* shaderSrc, const std::shared_ptr<TexturePool>& pool, bool cullFace, bool wireFrame)
 {
 	Material mat;
 	
@@ -134,7 +135,7 @@ Material Graphics::createPointToTriangleGSForwardMaterial(const char* shaderSrc,
 	param.primitive = dx12::PipelineState::Point;
 
 	mat._signature = _standartRootSignature;
-	mat._pipeline = eastl::make_shared<dx12::PipelineState>(_renderer.device(), mat._signature->rootSignature(), inLayout, shaderSrc, param, true);
+	mat._pipeline = std::make_shared<dx12::PipelineState>(_renderer.device(), mat._signature->rootSignature(), inLayout, shaderSrc, param, true);
 	mat._textures = pool;
 
 	return mat;
@@ -144,7 +145,7 @@ ProxyTexture Graphics::createTextureWithMips(const tim::ImageAlgorithm<tim::bvec
 {
 	auto mips = TextureGenerator::generateMips(img);
 	auto t = new dx12::Texture(img.size(), mips.size() + 1, DXGI_FORMAT_R8G8B8A8_UNORM);
-	eastl::vector<const byte*> mips_data(mips.size() + 1);
+	std::vector<const byte*> mips_data(mips.size() + 1);
 	mips_data[0] = reinterpret_cast<byte*>(img.data());
 
 	for (size_t i = 0; i < mips.size(); ++i)

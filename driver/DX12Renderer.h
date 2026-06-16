@@ -6,7 +6,7 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
-#include <EASTL/unique_ptr.h>
+#include <memory>
 #include <core/NonCopyable.h>
 #include <graphics/RendererStruct.h>
 #include <math/Matrix.h>
@@ -36,11 +36,11 @@ namespace dx12
 		bool init(const InitRendererInfo&);
 
 		void beginRender(const tim::Camera& camera, float timeElapsed);
-		void render(const Material&, const eastl::vector<ObjectInstance>&);
+		void render(const Material&, const std::vector<ObjectInstance>&);
 		void endRender();
 		void close();
 
-		static Shader compileShader(eastl::string src, ShaderType, eastl::string entryPoint = "main");
+		static Shader compileShader(std::string src, ShaderType, std::string entryPoint = "main");
 
 		ID3D12Device* device() const { return _device; }
 
@@ -55,7 +55,7 @@ namespace dx12
 		ID3D12Resource* _backBufferRenderTarget[NB_BUFFERS];
 		unsigned int _bufferIndex;
 
-		eastl::unique_ptr<CommandQueueManager> _commandQueueManager;
+		std::unique_ptr<CommandQueueManager> _commandQueueManager;
 		GraphicsCommandContext* _commandContext;
 		Descriptor _backBufferDescriptors[NB_BUFFERS];
 
@@ -101,9 +101,9 @@ namespace dx12
 		};
 
 	private:
-		static eastl::vector<AdapterInfo> enumGpu();
+		static std::vector<AdapterInfo> enumGpu();
 
-		void createSwapChain(int, const eastl::vector<AdapterInfo>&, const InitRendererInfo&);
+		void createSwapChain(int, const std::vector<AdapterInfo>&, const InitRendererInfo&);
 		void enableDebugLayer() const;
 	};
 }

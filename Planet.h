@@ -1,6 +1,9 @@
 #pragma once
 
-#include <EASTL/vector.h>
+#include <vector>
+#include <array>
+#include <functional>
+#include <memory>
 #include "geometry/Mesh.h"
 #include "math/Sphere.h"
 #include "math/Camera.h"
@@ -13,7 +16,7 @@
 #include <core/ctpl_stl.h>
 extern ctpl::thread_pool g_threadPool;
 
-extern eastl::unique_ptr<tim::FractalNoise<tim::WorleyNoise<tim::vec3>>> g_fractalWorley3d;
+extern std::unique_ptr<tim::FractalNoise<tim::WorleyNoise<tim::vec3>>> g_fractalWorley3d;
 
 class Planet : NonCopyable
 {
@@ -48,7 +51,7 @@ public:
 
     tim::UVMesh generateMesh(tim::vec3) const;
 
-	void cull(const tim::Camera&, eastl::vector<ObjectInstance>&);
+	void cull(const tim::Camera&, std::vector<ObjectInstance>&);
 
 	tim::vec3 computeUp(tim::vec3 pos);
 
@@ -63,24 +66,24 @@ private:
 	vec3 _position;
 	Parameter _parameter;
 
-    using BatchInstance = eastl::vector<tim::BaseMesh::Face>;
+    using BatchInstance = std::vector<tim::BaseMesh::Face>;
 	static const int NB_LODS = 4;
 
     enum { LOW_RES_PLANET = -1, SIDE_X=0, SIDE_NX, SIDE_Y, SIDE_NY, SIDE_Z, SIDE_NZ, NB_SIDE=6 };
-    eastl::array<tim::BaseMesh, NB_SIDE> _planetSide;
-	eastl::array<tim::BaseMesh, NB_SIDE> _planetSideLowRes;
+    std::array<tim::BaseMesh, NB_SIDE> _planetSide;
+	std::array<tim::BaseMesh, NB_SIDE> _planetSideLowRes;
 
     tim::uint _gridResolution;
-    eastl::vector<tim::uint> _gridIndex;
+    std::vector<tim::uint> _gridIndex;
 
-	template <class T> using GridType = eastl::array<eastl::array<T, NB_SPLIT>, NB_SPLIT>;
-	GridType< eastl::array<BatchInstance, NB_LODS> > _grid;
+	template <class T> using GridType = std::array<std::array<T, NB_SPLIT>, NB_SPLIT>;
+	GridType< std::array<BatchInstance, NB_LODS> > _grid;
 
 	bool _isLowResReady = false;
 	bool _isSideReady[NB_SIDE] = { false };
 
-	eastl::array<MeshBuffers, NB_SIDE> _lowResMesh;
-	eastl::array< GridType<eastl::array<MeshBuffers, NB_LODS>>, NB_SIDE > _planetMesh;
+	std::array<MeshBuffers, NB_SIDE> _lowResMesh;
+	std::array< GridType<std::array<MeshBuffers, NB_LODS>>, NB_SIDE > _planetMesh;
 
 private:
     tim::uint indexGrid(tim::uint,tim::uint) const;
@@ -132,7 +135,7 @@ private:
 			return large < parameter.floorHeight ? 0 : (large - parameter.floorHeight)*parameter.sizePlanet.y();
 		};
 
-		eastl::function<float(vec3)> noiseFun() const
+		std::function<float(vec3)> noiseFun() const
 		{
 			return [&](vec3 v) { return noiseFun(v); };
 		}

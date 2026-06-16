@@ -1,7 +1,8 @@
 #pragma once
 
 #include "API.h"
-#include <EASTL/shared_ptr.h>
+#include <queue>
+#include <memory>
 
 class ProxyTexture
 {
@@ -19,7 +20,7 @@ public:
 	bool isEmpty() const { return !(bool)_texture; }
 
 private:
-	eastl::shared_ptr<dx12::Texture> _texture;
+	std::shared_ptr<dx12::Texture> _texture;
 };
 
 // manage a pool of textures with the associated GPU-visible descriptors
@@ -43,16 +44,16 @@ private:
 private:
 	uint32_t _size;
 
-	eastl::vector<dx12::Descriptor> _srvDescr;
+	std::vector<dx12::Descriptor> _srvDescr;
 
 	struct HeapSet
 	{
-		eastl::vector<ProxyTexture> textures;
-		eastl::unique_ptr<dx12::DescriptorHeap> heap;
+		std::vector<ProxyTexture> textures;
+		std::unique_ptr<dx12::DescriptorHeap> heap;
 	};
 	HeapSet _curHeap;
 	
-	eastl::queue<HeapSet> _freeHeaps;
+	std::queue<HeapSet> _freeHeaps;
 	bool _used = false;
 	std::mutex _mutex;
 

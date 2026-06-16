@@ -1,7 +1,7 @@
 #ifndef SAMPLEFUNCTION_H
 #define SAMPLEFUNCTION_H
 
-#include <EASTL/vector.h>
+#include <vector>
 
 namespace tim
 {
@@ -10,7 +10,7 @@ class SampleFunction
 {
 public:
     SampleFunction();
-    SampleFunction(const eastl::vector<float>&);
+    SampleFunction(const std::vector<float>&);
     SampleFunction(std::initializer_list<float>);
 
     SampleFunction(const SampleFunction&) = default;
@@ -24,7 +24,7 @@ public:
 	static SampleFunction interpolate(const SampleFunction& f1, const SampleFunction& f2, float coef);
 
 private:
-    eastl::vector<float> _samples;
+    std::vector<float> _samples;
 };
 
 }

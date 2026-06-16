@@ -1,4 +1,5 @@
 #include "SampleFunction.h"
+#include <algorithm>
 #include "core/type.h"
 #include "math/math.h"
 
@@ -11,7 +12,7 @@ SampleFunction::SampleFunction()
 
 }
 
-SampleFunction::SampleFunction(const eastl::vector<float>& samples) : _samples(samples)
+SampleFunction::SampleFunction(const std::vector<float>& samples) : _samples(samples)
 {
 
 }
@@ -37,11 +38,11 @@ float SampleFunction::operator()(float x) const
     if(_samples.empty())
         return 0;
 
-    x = eastl::min(eastl::max(x, 0.f), 1.f);
+    x = std::min(std::max(x, 0.f), 1.f);
     x = float(_samples.size()-1) * x;
 
-    uint x1 = eastl::min(uint(x), _samples.size()-1);
-    uint x2 = eastl::min(uint(x+1), _samples.size()-1);
+    uint x1 = std::min(uint(x), _samples.size()-1);
+    uint x2 = std::min(uint(x+1), _samples.size()-1);
 
     x = fmodf(x, 1);
 
@@ -50,7 +51,7 @@ float SampleFunction::operator()(float x) const
 
 SampleFunction SampleFunction::interpolate(const SampleFunction& f1, const SampleFunction& f2, float coef)
 {	
-	uint nbPts = eastl::max(f1._samples.size(), f2._samples.size());
+	uint nbPts = std::max(f1._samples.size(), f2._samples.size());
 
 	if (nbPts == 0)
 		return SampleFunction();

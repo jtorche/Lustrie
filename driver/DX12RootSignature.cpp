@@ -2,8 +2,8 @@
 
 namespace dx12
 {
-	RootSignature::RootSignature(ID3D12Device* device, const eastl::vector<RootParameter>& param,
-		const eastl::vector<D3D12_STATIC_SAMPLER_DESC>& samplers, D3D12_ROOT_SIGNATURE_FLAGS flags)
+	RootSignature::RootSignature(ID3D12Device* device, const std::vector<RootParameter>& param,
+		const std::vector<D3D12_STATIC_SAMPLER_DESC>& samplers, D3D12_ROOT_SIGNATURE_FLAGS flags)
 	{
 		D3D12_ROOT_SIGNATURE_DESC rootDesc;
 		rootDesc.NumParameters = param.size();

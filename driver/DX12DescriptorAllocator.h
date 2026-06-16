@@ -1,8 +1,8 @@
 #pragma once
 
 #include <core/NonCopyable.h>
-#include <EASTL/unique_ptr.h>
-#include <EASTL/vector.h>
+#include <memory>
+#include <vector>
 #include "DX12.h"
 #include <mutex>
 
@@ -93,8 +93,8 @@ namespace dx12
 	private:
 		D3D12_DESCRIPTOR_HEAP_TYPE _type;
 		std::mutex _mutex;
-		eastl::vector<eastl::unique_ptr<DescriptorHeap>> _oldHeap;
-		eastl::unique_ptr<DescriptorHeap> _currentHeap;
+		std::vector<std::unique_ptr<DescriptorHeap>> _oldHeap;
+		std::unique_ptr<DescriptorHeap> _currentHeap;
 
 		static int _counter;
 	};

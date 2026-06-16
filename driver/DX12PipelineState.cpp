@@ -9,7 +9,7 @@ using Microsoft::WRL::ComPtr;
 namespace dx12
 {
 	PipelineState::PipelineState(ID3D12Device* device, ID3D12RootSignature* rootSignature, DX12InputLayout& inLayout, 
-		const eastl::string& shaderSrc, const ForwardPipelineParam& param, bool useGS)
+		const std::string& shaderSrc, const ForwardPipelineParam& param, bool useGS)
 	{
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
 		initDesc(desc, inLayout, param);

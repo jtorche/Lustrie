@@ -1,4 +1,5 @@
 #include "LustrieCore.h"
+#include <memory>
 
 #include <core/Chrono.h>
 #include <core/ctpl_stl.h>
@@ -13,24 +14,24 @@ LustrieCore::LustrieCore(EventManager& event) : _event(event)
 bool LustrieCore::init(tim::ivec2 resolution, bool fullscreen, HWND handle)
 {
 	srand(time(NULL));
-	_texGen = eastl::make_unique<TextureGenerator>(rand());
+	_texGen = std::make_unique<TextureGenerator>(rand());
 
 	bool b = _graphics.init(resolution, fullscreen, handle);
 
-	eastl::string shaderSrc = eastl::string(dx12::g_headerShader) + eastl::string(dx12::g_planetShader);
-	_planet.planetMaterial = eastl::make_unique<Material>(_graphics.createTexturedForwardMaterial(shaderSrc.c_str(), 
-		eastl::make_shared<TexturePool>(Graphics::SIZE_TEXTURE_POOL), true, false));
+	std::string shaderSrc = std::string(dx12::g_headerShader) + std::string(dx12::g_planetShader);
+	_planet.planetMaterial = std::make_unique<Material>(_graphics.createTexturedForwardMaterial(shaderSrc.c_str(), 
+		std::make_shared<TexturePool>(Graphics::SIZE_TEXTURE_POOL), true, false));
 
-	auto grassMat = eastl::make_shared<Material>(_graphics.createPointToTriangleGSForwardMaterial(dx12::g_grassShader, _planet.planetMaterial->texturePool(), false, false));
+	auto grassMat = std::make_shared<Material>(_graphics.createPointToTriangleGSForwardMaterial(dx12::g_grassShader, _planet.planetMaterial->texturePool(), false, false));
 	_planet.grassMaterial.push_back(grassMat);
 
-	shaderSrc = eastl::string(dx12::g_headerShader) + eastl::string(dx12::g_defaultShader);
-	_planet.plantMaterial = eastl::make_unique<Material>(_graphics.createTexturedForwardMaterial(shaderSrc.c_str(), _planet.planetMaterial->texturePool(), true, false));
-	_planet.leafMaterial = eastl::make_unique<Material>(_graphics.createTexturedForwardMaterial(shaderSrc.c_str(), _planet.planetMaterial->texturePool(), false, false));
+	shaderSrc = std::string(dx12::g_headerShader) + std::string(dx12::g_defaultShader);
+	_planet.plantMaterial = std::make_unique<Material>(_graphics.createTexturedForwardMaterial(shaderSrc.c_str(), _planet.planetMaterial->texturePool(), true, false));
+	_planet.leafMaterial = std::make_unique<Material>(_graphics.createTexturedForwardMaterial(shaderSrc.c_str(), _planet.planetMaterial->texturePool(), false, false));
 	
 	auto sync = g_threadPool.push([&](int) {
-		auto gen = eastl::make_unique<tim::FractalNoise<tim::WorleyNoise<tim::vec3>>>(3, WorleyNoiseInstancer<WorleyNoise<vec3>>(50, 8, 1, rand()));
-		eastl::swap(gen, g_fractalWorley3d);
+		auto gen = std::make_unique<tim::FractalNoise<tim::WorleyNoise<tim::vec3>>>(3, WorleyNoiseInstancer<WorleyNoise<vec3>>(50, 8, 1, rand()));
+		std::swap(gen, g_fractalWorley3d);
 	});
 
 	sync.wait();
@@ -69,16 +70,16 @@ void LustrieCore::update()
 		planetParam.floorHeight = 0.7f;*/
 
 		_camera.position = vec3(0, 0, planetParam.sizePlanet.x()+planetParam.sizePlanet.y());
-		_planet.planet = eastl::unique_ptr<Planet>(new Planet(256, planetParam, rand()));
+		_planet.planet = std::unique_ptr<Planet>(new Planet(256, planetParam, rand()));
 
 #ifdef _DEBUG
 		for (int i = 0; i<1; ++i)
 #else
 		for(int i=0 ; i<4 ; ++i)
 #endif
-			_planet.grassOnPlanet.emplace_back(eastl::unique_ptr<PlanetGrass>(new PlanetGrass(*_planet.planet, i)));
+			_planet.grassOnPlanet.emplace_back(std::unique_ptr<PlanetGrass>(new PlanetGrass(*_planet.planet, i)));
 		
-		_planet.plants = eastl::make_unique<PlanetPlants>(rand());
+		_planet.plants = std::make_unique<PlanetPlants>(rand());
 		_planet.plants->createTree(1, 5);
 		_planet.plants->createTree(1, 5);
 		for (int i = 0; i<10; ++i)
@@ -92,7 +93,7 @@ void LustrieCore::update()
 		g_threadPool.push([&, seed](int) {
 			std::mt19937 randEngine(seed);
 
-			eastl::vector<TextureGenerator::ColorBank> colorTypes;
+			std::vector<TextureGenerator::ColorBank> colorTypes;
 			colorTypes.push_back((TextureGenerator::ColorBank)(randEngine() % TextureGenerator::ColorBank::NB_COLOR));
 			if(randEngine()%2)
 				colorTypes.push_back((TextureGenerator::ColorBank)(randEngine() % TextureGenerator::ColorBank::NB_COLOR));

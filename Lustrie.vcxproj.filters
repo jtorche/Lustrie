@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{7ea61ca8-65ac-425b-90a5-34e8a1d49fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="driver">
+      <UniqueIdentifier>{3c7289f7-4621-4319-abd9-3e357add8912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry">
+      <UniqueIdentifier>{9c595e49-4040-4f15-a935-85ce399bca37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphics">
+      <UniqueIdentifier>{338ed58e-7428-4139-a233-07db7a0c0d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{b614da60-beab-40cb-ac29-b18f5f7e9342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math\extern">
+      <UniqueIdentifier>{cb92bacf-8e0e-4184-9e2c-0511ffa7bb8e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="core\memalloc.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12Allocator.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12Buffer.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12ColorBuffer.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12CommandList.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12CommandQueue.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12DescriptorAllocator.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12PipelineState.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12Renderer.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12Resource.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12RootSignature.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\Dx12Test.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12Texture.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\DX12TextureBuffer.cpp">
+      <Filter>driver</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry\Curve.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry\Geometry.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry\LeafGenerator.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry\LTree.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry\Mesh.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry\TreeParameterGenerator.cpp">
+      <Filter>geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Graphics.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\Material.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\MeshBuffers.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\System.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\TexturePool.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="LustrieCore.cpp" />
+    <ClCompile Include="math\extern\rtnorm.cpp">
+      <Filter>math\extern</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Frustum.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\PerlinNoise.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\SampleFunction.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\SimplexNoise.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Sphere.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="PlanetGrass.cpp" />
+    <ClCompile Include="PlanetPlants.cpp" />
+    <ClCompile Include="PlanetTextureManager.cpp" />
+    <ClCompile Include="TextureGenerator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ControlCamera.h" />
+    <ClInclude Include="driver\DX12.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12Allocator.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12Buffer.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12ColorBuffer.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12CommandList.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12CommandQueue.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12DescriptorAllocator.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12InputLayout.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12PipelineState.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12Renderer.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12Resource.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12RootSignature.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12Texture.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\DX12TextureBuffer.h">
+      <Filter>driver</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="geometry\Curve.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\Geometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\LeafGenerator.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\LTree.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\Mesh.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\Palette.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\API.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Graphics.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\Material.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\MeshBuffers.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\RendererStruct.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\System.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\TexturePool.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="LustrieCore.h" />
+    <ClInclude Include="math\Camera.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\extern\rtnorm.hpp">
+      <Filter>math\extern</Filter>
+    </ClInclude>
+    <ClInclude Include="math\FractalNoise.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Frustum.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\math.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Matrix.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\PascaleTriangle.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\PDF.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\PerlinNoise.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Plan.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Quaternion.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\SampleFunction.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\SimplexNoise.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Sphere.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\WorleyNoise.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet.h" />
+    <ClInclude Include="PlanetGrass.h" />
+    <ClInclude Include="PlanetPlants.h" />
+    <ClInclude Include="PlanetSystem.h" />
+    <ClInclude Include="PlanetTextureManager.h" />
+    <ClInclude Include="TextureGenerator.h" />
+  </ItemGroup>
+</Project>

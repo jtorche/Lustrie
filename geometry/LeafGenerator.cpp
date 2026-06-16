@@ -15,7 +15,7 @@ void LeafGenerator::generate(const Parameter& param)
     SampleFunction fun = leafFunction(param.leafType);
 
     uint resY = param.smoothAlongY ? 3:2;
-    eastl::vector<uint> startLine(resY);
+    std::vector<uint> startLine(resY);
 
     for(uint y=0 ; y<resY ; ++y)
     {

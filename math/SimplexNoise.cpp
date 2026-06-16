@@ -1,13 +1,14 @@
 #include "SimplexNoise.h"
+#include <array>
 #include <random>
-#include <EASTL/algorithm.h>
+#include <algorithm>
 
 namespace tim
 {
 
 namespace internal
 {
-    eastl::array<vec3, 12> SimplexNoiseBaseBase::grad3 =
+    std::array<vec3, 12> SimplexNoiseBaseBase::grad3 =
         {{{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
           {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
           {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1}}};

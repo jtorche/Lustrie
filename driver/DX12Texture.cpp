@@ -35,14 +35,14 @@ namespace dx12
 
 	void Texture::upload(const byte* data, uint64_t* fence)
 	{
-		upload(eastl::vector<const byte*>(1, data), fence);
+		upload(std::vector<const byte*>(1, data), fence);
 	}
 
-	void Texture::upload(eastl::vector<const byte*> mips, uint64_t* fence)
+	void Texture::upload(std::vector<const byte*> mips, uint64_t* fence)
 	{
 		CommandContext& commandlist = CommandContext::AllocContext(CommandQueue::COPY);
 
-		eastl::vector<D3D12_SUBRESOURCE_DATA> res(mips.size());
+		std::vector<D3D12_SUBRESOURCE_DATA> res(mips.size());
 		for (size_t i = 0; i < mips.size(); ++i)
 		{
 			res[i].pData = mips[i];

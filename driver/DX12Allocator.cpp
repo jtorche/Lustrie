@@ -50,14 +50,14 @@ namespace dx12
 		return pagePtr;
 	}
 
-	void LinearAllocatorPageManager::discardPages(uint64_t fenceValue, const eastl::vector<LinearAllocationPage*>& usedPages)
+	void LinearAllocatorPageManager::discardPages(uint64_t fenceValue, const std::vector<LinearAllocationPage*>& usedPages)
 	{
 		std::lock_guard<std::mutex> lockGuard(_mutex);
 		for (auto it = usedPages.begin(); it != usedPages.end(); ++it)
 			_retiredPages.push({ fenceValue, *it });
 	}
 
-	void LinearAllocatorPageManager::freeLargePages(uint64_t fenceValue, const eastl::vector<LinearAllocationPage*>& largePages)
+	void LinearAllocatorPageManager::freeLargePages(uint64_t fenceValue, const std::vector<LinearAllocationPage*>& largePages)
 	{
 		std::lock_guard<std::mutex> lockGuard(_mutex);
 

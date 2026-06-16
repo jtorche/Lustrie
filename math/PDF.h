@@ -2,6 +2,7 @@
 #define PDF_TIM
 
 #include "Vector.h"
+#include <algorithm>
 #include <iostream>
 
 namespace tim

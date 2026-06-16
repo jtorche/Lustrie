@@ -1,13 +1,15 @@
 #pragma once
 
 #include "DX12.h"
+#include <array>
+#include <queue>
 #include "DX12CommandQueue.h"
 #include <core/NonCopyable.h>
 #include "DX12Buffer.h"
 #include "DX12Texture.h"
 #include "DX12Allocator.h"
 
-#include <EASTL/unique_ptr.h>
+#include <memory>
 
 namespace dx12
 {
@@ -36,7 +38,7 @@ namespace dx12
 		void copySubBuffer(Resource& dest, size_t destOffset, CpuWritableBuffer& src, size_t srcOffset, size_t numBytes);
 
 		void initBuffer(Resource& dest, const void* data, size_t numBytes, size_t offset = 0);
-		void initTexture(Texture& dest, const eastl::vector<D3D12_SUBRESOURCE_DATA>&);
+		void initTexture(Texture& dest, const std::vector<D3D12_SUBRESOURCE_DATA>&);
 
 		DynAlloc allocWritableBuffer(size_t bytes);
 
@@ -49,7 +51,7 @@ namespace dx12
 		ID3D12CommandAllocator* _allocator = nullptr;
 		LinearAllocator _cpuAllocator;
 
-		eastl::array<D3D12_RESOURCE_BARRIER, 16> _resourceBarrierPool;
+		std::array<D3D12_RESOURCE_BARRIER, 16> _resourceBarrierPool;
 		UINT _numBarriersToFlush = 0;
 
 	protected:
@@ -90,8 +92,8 @@ namespace dx12
 		void destroyAll();
 
 	private:
-		eastl::vector<eastl::unique_ptr<CommandContext> > _pool[CommandQueue::NUM_TYPE];
-		eastl::queue<CommandContext*> _availableContexts[CommandQueue::NUM_TYPE];
+		std::vector<std::unique_ptr<CommandContext> > _pool[CommandQueue::NUM_TYPE];
+		std::queue<CommandContext*> _availableContexts[CommandQueue::NUM_TYPE];
 		std::mutex _mutex;
 	};
 

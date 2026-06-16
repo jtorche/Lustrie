@@ -1,8 +1,8 @@
 #include "Mesh.h"
 #include <iostream>
-#include <EASTL/unordered_map.h>
+#include <unordered_map>
 
-using namespace eastl;
+using namespace std;
 
 namespace tim
 {
@@ -147,7 +147,7 @@ BaseMesh& BaseMesh::computeNormals(bool correctSeems, int smooth)
 
 	if (smooth > 0)
 	{
-		eastl::vector<vec3> tmpNormals(_vertices.size());
+		std::vector<vec3> tmpNormals(_vertices.size());
 		for (int s = 0; s < smooth; ++s)
 		{
 			for (size_t i = 0; i < _vertices.size(); ++i)
@@ -174,7 +174,7 @@ BaseMesh& BaseMesh::computeNormals(bool correctSeems, int smooth)
 				tmpNormals[i] = n.normalized();
 			}
 
-			eastl::swap(_normals, tmpNormals);
+			std::swap(_normals, tmpNormals);
 		}
 	}
 
@@ -191,10 +191,10 @@ BaseMesh& BaseMesh::invertFaces()
     for(auto& face : _faces)
     {
         if(face.nbIndexes > 2)
-            eastl::swap(face.indexes[0], face.indexes[1]);
+            std::swap(face.indexes[0], face.indexes[1]);
 
         if(face.nbIndexes == 4)
-            eastl::swap(face.indexes[2], face.indexes[3]);
+            std::swap(face.indexes[2], face.indexes[3]);
     }
 
     return *this;
@@ -252,7 +252,7 @@ namespace
 void BaseMesh::buildVertexFaceMap(bool useRealPosition)
 {
     _vertexToFaces.clear();
-    _vertexToFaces.resize(_vertices.size(), eastl::vector<uint>());
+    _vertexToFaces.resize(_vertices.size(), std::vector<uint>());
 
     if(!useRealPosition)
     {
@@ -264,7 +264,7 @@ void BaseMesh::buildVertexFaceMap(bool useRealPosition)
     }
     else
     {
-        eastl::unordered_map<vec3, vector<uint>, HashVec3> positionToVertex;
+        std::unordered_map<vec3, vector<uint>, HashVec3> positionToVertex;
         for(size_t i=0 ; i<_vertices.size() ; ++i)
             positionToVertex[_vertices[i]].push_back(i);
 
@@ -319,7 +319,7 @@ void BaseMesh::generateGrid(BaseMesh& mesh, vec2 size, uivec2 resolution, const 
 	if(!heightmap.empty())
 		d_img = vec2(float(heightmap.size().x()) / (resolution.x() - 1), float(heightmap.size().y()) / (resolution.y() - 1));
 
-	eastl::vector<eastl::vector<uint>> indexes(resolution.x(), eastl::vector<uint>(resolution.y()));
+	std::vector<std::vector<uint>> indexes(resolution.x(), std::vector<uint>(resolution.y()));
     uint curIndex = 0;
 	
 	for (uint i = 0; i < resolution.x(); ++i)
@@ -359,12 +359,12 @@ void BaseMesh::clearFaces()
     _faces.clear();
 }
 
-eastl::vector<uint> BaseMesh::indexData(uint nbPointsInFace) const
+std::vector<uint> BaseMesh::indexData(uint nbPointsInFace) const
 {
 	if (nbPointsInFace == 0)
 		nbPointsInFace = 3;
 
-	eastl::vector<uint> data;
+	std::vector<uint> data;
 	data.reserve(_faces.size() * nbPointsInFace);
 
 	for (const auto& f : _faces)
@@ -376,7 +376,7 @@ eastl::vector<uint> BaseMesh::indexData(uint nbPointsInFace) const
 	return data;
 }
 
-void BaseMesh::computeJoinNormals(eastl::vector<BaseMesh*>& meshs, int smooth)
+void BaseMesh::computeJoinNormals(std::vector<BaseMesh*>& meshs, int smooth)
 {
 	BaseMesh joined;
 	for (auto m : meshs)

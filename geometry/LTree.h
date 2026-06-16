@@ -5,7 +5,7 @@
 #include "math/Quaternion.h"
 #include "math/PDF.h"
 #include "math/SampleFunction.h"
-#include <EASTL/deque.h>
+#include <deque>
 
 #include <random>
 
@@ -45,8 +45,8 @@ namespace tim
 
             GaussPDF branchAngle = vec2(10,40);
             GaussPDF firstBranchAngleCoef = vec2(1,1);
-            eastl::vector<float> branchSplitDensity = {0,1,1};
-            eastl::vector<float> branchEarlyTermination = {0,0,0,0.5};
+            std::vector<float> branchSplitDensity = {0,1,1};
+            std::vector<float> branchEarlyTermination = {0,0,0,0.5};
             float branchSplitNoise = 0.5f;
 
             float initialBranchSize = 0.5f;
@@ -71,7 +71,7 @@ namespace tim
 			/* methods */
 			Parameter& alterate(int seed, float amount = 1);
 
-			static eastl::vector<float> interpolate(const eastl::vector<float>&, const eastl::vector<float>&, float);
+			static std::vector<float> interpolate(const std::vector<float>&, const std::vector<float>&, float);
 			static Parameter interpolate(const Parameter&, const Parameter&, float);
             void print() const;
         };
@@ -97,7 +97,7 @@ namespace tim
         LTree& operator=(const LTree&) = default;
         LTree& operator=(LTree&&) = default;
 
-        void exportOBJ(eastl::string) const;
+        void exportOBJ(std::string) const;
         Mesh generateMesh(int resolution = 8) const;
         UVMesh generateUVMesh(int resolution = 8) const;
         Mesh generateLeaf(const LeafParameter&) const;
@@ -118,14 +118,14 @@ namespace tim
             uivec2 range;
 
             Node* child;
-            eastl::vector<Node*> nodes;
+            std::vector<Node*> nodes;
             //float branchPosition, branchAngle, thickness;
         };
 
         Node* _root = nullptr;
 
-        eastl::deque<Node, EASTLAllocatorType, 256> _nodePool;
-        eastl::deque<Curve, EASTLAllocatorType, 256> _curvePool;
+        std::deque<Node> _nodePool;
+        std::deque<Curve> _curvePool;
 
         mutable std::mt19937 _randEngine;
         mutable std::uniform_real_distribution<float> _random;

@@ -1,4 +1,5 @@
 #include "DX12DescriptorAllocator.h"
+#include <memory>
 #include <core/Logger.h>
 
 namespace dx12
@@ -47,12 +48,12 @@ namespace dx12
 		std::lock_guard<std::mutex> guard(_mutex);
 
 		if (_currentHeap == nullptr)
-			_currentHeap = eastl::make_unique<DescriptorHeap>(_type, 128, false);
+			_currentHeap = std::make_unique<DescriptorHeap>(_type, 128, false);
 
 		if (!_currentHeap->hasSpaceFor(count))
 		{
-			_oldHeap.emplace_back(eastl::move(_currentHeap));
-			_currentHeap = eastl::make_unique<DescriptorHeap>(_type, 128, false);
+			_oldHeap.emplace_back(std::move(_currentHeap));
+			_currentHeap = std::make_unique<DescriptorHeap>(_type, 128, false);
 		}
 
 		_ASSERT(_currentHeap->hasSpaceFor(count));

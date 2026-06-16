@@ -1,15 +1,16 @@
 #pragma once
 
 #include "DX12.h"
+#include <core/NonCopyable.h>
 
 namespace dx12
 {
-	class DX12InputLayout : EANonCopyable
+	class DX12InputLayout : NonCopyable
 	{
 	public:
 		DX12InputLayout() = default;
 
-		void initAsFloatVectors(const eastl::vector<eastl::pair<eastl::string, UINT>>& layout) // (name , num float)
+		void initAsFloatVectors(const std::vector<std::pair<std::string, UINT>>& layout) // (name , num float)
 		{
 			clear();
 			UINT stride = 0;
@@ -62,7 +63,7 @@ namespace dx12
 			setupName();
 		}
 
-		void addMat4PerInstanceElement(const eastl::vector<eastl::string>& layout)
+		void addMat4PerInstanceElement(const std::vector<std::string>& layout)
 		{
 			for (auto elem : layout)
 			{
@@ -116,8 +117,8 @@ namespace dx12
 		const D3D12_INPUT_ELEMENT_DESC* getLayout() const { return _layout.data();  }
 
 	private:
-		eastl::vector<D3D12_INPUT_ELEMENT_DESC> _layout;
-		eastl::vector<eastl::string> _names;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> _layout;
+		std::vector<std::string> _names;
 		UINT _inputSlot = 0;
 
 		void clear()

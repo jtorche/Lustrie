@@ -1,9 +1,9 @@
 #pragma once
 
-#include <EASTL/map.h>
+#include <map>
 #include <Windows.h>
 #include <math/Vector.h>
-#include <EASTL/algorithm.h>
+#include <algorithm>
 
 class EventManager
 {
@@ -19,8 +19,8 @@ public:
 		if (updateDelta)
 		{
 			_deltaMouse = v - _curMousePos;
-			//_deltaMouse.x() = eastl::min(eastl::max(_deltaMouse.x(), -3), 3);
-			//_deltaMouse.y() = eastl::min(eastl::max(_deltaMouse.y(), -3), 3);
+			//_deltaMouse.x() = std::min(std::max(_deltaMouse.x(), -3), 3);
+			//_deltaMouse.y() = std::min(std::max(_deltaMouse.y(), -3), 3);
 		}
 		
 		_curMousePos = v;  
@@ -73,6 +73,6 @@ public:
 private:
 	tim::ivec2 _curMousePos=0;
 	tim::ivec2 _deltaMouse=0;
-	eastl::map<WPARAM, KeyState> _key;
+	std::map<WPARAM, KeyState> _key;
 	KeyState _mouseButton[2];
 };

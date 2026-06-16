@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Vector.h"
+#include <memory>
 #include "EventManager.h"
 #include "graphics\Graphics.h"
 #include "ControlCamera.h"
@@ -25,7 +26,7 @@ private:
 	Graphics _graphics;
 	ControlCamera _camera;
 
-	eastl::unique_ptr<TextureGenerator> _texGen;
+	std::unique_ptr<TextureGenerator> _texGen;
 	PlanetSystem _planet;
 
 	float _elapsed = 0.01f;

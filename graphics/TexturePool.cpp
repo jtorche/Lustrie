@@ -1,8 +1,9 @@
 #include "TexturePool.h"
+#include <memory>
 #include "graphics/Graphics.h"
 
 TexturePool::TexturePool(uint32_t size) 
-	: _size(size), _srvDescr(size), _curHeap{ eastl::vector<ProxyTexture>(size), eastl::make_unique<dx12::DescriptorHeap>(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, size, true) }
+	: _size(size), _srvDescr(size), _curHeap{ std::vector<ProxyTexture>(size), std::make_unique<dx12::DescriptorHeap>(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, size, true) }
 {
 	for (uint32_t i = 0; i < size; ++i)
 	{
@@ -38,17 +39,17 @@ dx12::DescriptorHeap& TexturePool::getHeap()
 void TexturePool::setupFreshHeap()
 {
 	auto tmpCpy = _curHeap.textures;
-	_freeHeaps.push({ eastl::move(_curHeap) });
+	_freeHeaps.push({ std::move(_curHeap) });
 	if (_freeHeaps.size() > _size)
 	{
-		eastl::swap(_curHeap.heap, _freeHeaps.front().heap);
-		_curHeap.textures = eastl::move(tmpCpy);
+		std::swap(_curHeap.heap, _freeHeaps.front().heap);
+		_curHeap.textures = std::move(tmpCpy);
 		_freeHeaps.pop();
 	}
 	else
 	{
-		_curHeap.heap = eastl::make_unique<dx12::DescriptorHeap>(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, _size, true);
-		_curHeap.textures = eastl::move(tmpCpy);
+		_curHeap.heap = std::make_unique<dx12::DescriptorHeap>(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, _size, true);
+		_curHeap.textures = std::move(tmpCpy);
 
 		for (uint32_t i = 0; i < _size; ++i)
 			_curHeap.heap->alloc(1);

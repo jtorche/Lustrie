@@ -1,4 +1,5 @@
 #include "PlanetPlants.h"
+#include <memory>
 #include "geometry\LTree.h"
 #include "geometry\LeafGenerator.h"
 #include "PlanetSystem.h"
@@ -8,7 +9,7 @@ PlanetPlants::PlanetPlants(int seed) : _seed(seed)
 	
 }
 
-void PlanetPlants::cull(const tim::Camera&, eastl::vector<ObjectInstance>& trunkPart, eastl::vector<ObjectInstance>& leafPart)
+void PlanetPlants::cull(const tim::Camera&, std::vector<ObjectInstance>& trunkPart, std::vector<ObjectInstance>& leafPart)
 {
 	for (auto& inst : _instances)
 	{
@@ -73,7 +74,7 @@ void PlanetPlants::createTree(int sizeCategorie, int nb)
 		MeshBuffers leafTreeBuffer = MeshBuffers::createFromMesh(treeGenerator.generateLeaf(genLeafParam));
 
 		Plant plant;
-		plant.lods.push_back({ { eastl::make_unique<MeshBuffers>(treeBuffer), eastl::make_unique<MeshBuffers>(leafTreeBuffer) }, 0 });
+		plant.lods.push_back({ { std::make_unique<MeshBuffers>(treeBuffer), std::make_unique<MeshBuffers>(leafTreeBuffer) }, 0 });
 		plant.boundingSphere = tree.computeBoundingSphere();
 
 		std::lock_guard<std::mutex> _(_treeVectorMutex);

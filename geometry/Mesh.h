@@ -1,8 +1,8 @@
 #pragma once
 
-#include <EASTL/vector.h>
-#include <EASTL/array.h>
-#include <EASTL/string.h>
+#include <vector>
+#include <array>
+#include <string>
 
 #include <fstream>
 
@@ -21,7 +21,7 @@ namespace tim
     public:
         struct Face
         {
-            eastl::array<uint,4> indexes; // support quads triangles, lines and points
+            std::array<uint,4> indexes; // support quads triangles, lines and points
             int nbIndexes;
         };
 
@@ -49,7 +49,7 @@ namespace tim
         vec3 position(uint) const;
 
 		const vec3* vertexData() const;
-		eastl::vector<uint> indexData(uint nbPointsInFace = 3) const;
+		std::vector<uint> indexData(uint nbPointsInFace = 3) const;
 
 		size_t requestBufferSize(bool withNormal = true, bool withUv = false) const;
 		void fillBuffer(void*, bool withNormal = true, bool withUv = false) const;
@@ -59,13 +59,13 @@ namespace tim
 
         BaseMesh& operator+=(const BaseMesh&);
 
-        void exportToObj(eastl::string) const;
+        void exportToObj(std::string) const;
 
         BaseMesh& computeNormals(bool correctSeems = true, int smooth = 0);
         BaseMesh& invertNormals();
         BaseMesh& invertFaces();
 
-		static void computeJoinNormals(eastl::vector<BaseMesh*>&, int smooth = 0);
+		static void computeJoinNormals(std::vector<BaseMesh*>&, int smooth = 0);
 
 		vec3 vertex(uint) const;
 		vec3 normal(uint) const;
@@ -73,12 +73,12 @@ namespace tim
 		Sphere computeBoundingSphere();
 		
     protected:
-		eastl::vector<vec3> _vertices;
-        eastl::vector<Face> _faces;
-        eastl::vector<vec3> _normals;
-        eastl::vector<vec2> _texCoords;
+		std::vector<vec3> _vertices;
+        std::vector<Face> _faces;
+        std::vector<vec3> _normals;
+        std::vector<vec2> _texCoords;
 
-        eastl::vector<eastl::vector<uint>> _vertexToFaces; // for each vertex, we know the faces the vertex is in
+        std::vector<std::vector<uint>> _vertexToFaces; // for each vertex, we know the faces the vertex is in
 
         void buildVertexFaceMap(bool useRealPosition);
 

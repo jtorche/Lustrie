@@ -1,5 +1,6 @@
 
 #include "DX12CommandQueue.h"
+#include <algorithm>
 #include <iostream>
 
 namespace dx12
@@ -73,7 +74,7 @@ namespace dx12
 	bool CommandQueue::isFenceComplete(uint64_t value)
 	{
 		if (value > _lastCompletedFenceValue)
-			_lastCompletedFenceValue = eastl::max(_lastCompletedFenceValue, _fence->GetCompletedValue());
+			_lastCompletedFenceValue = std::max(_lastCompletedFenceValue, _fence->GetCompletedValue());
 
 		return value <= _lastCompletedFenceValue;
 	}
@@ -113,7 +114,7 @@ namespace dx12
 
 		if (!readyAllocator.empty())
 		{
-			eastl::pair<uint64_t, ID3D12CommandAllocator*>& allocatorPair = readyAllocator.front();
+			std::pair<uint64_t, ID3D12CommandAllocator*>& allocatorPair = readyAllocator.front();
 
 			if (allocatorPair.first <= completedFenceValue)
 			{
@@ -138,7 +139,7 @@ namespace dx12
 	void CommandQueue::QueueAllocatorPool::discard(uint64_t fenceValue, ID3D12CommandAllocator* allocator)
 	{
 		std::lock_guard<std::mutex> guard(poolMutex);
-		readyAllocator.push(eastl::make_pair(fenceValue, allocator));
+		readyAllocator.push(std::make_pair(fenceValue, allocator));
 	}
 
 
@@ -154,7 +155,7 @@ namespace dx12
 #endif
 	}
 
-	eastl::pair<ID3D12GraphicsCommandList*, ID3D12CommandAllocator*> CommandQueueManager::createCommandList(CommandQueue::CommandQueueType type)
+	std::pair<ID3D12GraphicsCommandList*, ID3D12CommandAllocator*> CommandQueueManager::createCommandList(CommandQueue::CommandQueueType type)
 	{
 		ID3D12GraphicsCommandList* list;
 		ID3D12CommandAllocator* allocator = commandQueue(type).getCommandAllocator();

@@ -102,7 +102,7 @@ namespace dx12
 		_list->CopyBufferRegion(dest.resource(), offset, alloc.buffer.resource(), alloc.inBufferOffset, numBytes);
 	}
 
-	void  CommandContext::initTexture(Texture& dest, const eastl::vector<D3D12_SUBRESOURCE_DATA>& subresource)
+	void  CommandContext::initTexture(Texture& dest, const std::vector<D3D12_SUBRESOURCE_DATA>& subresource)
 	{
 		UINT64 uploadBufferSize = GetRequiredIntermediateSize(dest.resource(), 0, subresource.size());
 

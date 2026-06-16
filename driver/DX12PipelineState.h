@@ -29,7 +29,7 @@ namespace dx12
 			Primitive primitive = Triangle;
 		};
 
-		PipelineState(ID3D12Device* device, ID3D12RootSignature*, DX12InputLayout&, const eastl::string& shaderSrc, 
+		PipelineState(ID3D12Device* device, ID3D12RootSignature*, DX12InputLayout&, const std::string& shaderSrc, 
 					  const ForwardPipelineParam&, bool useGS = false);
 
 		ID3D12PipelineState* getPipelineState() const { return _pipeline.Get(); }

@@ -1,8 +1,10 @@
 #include "TextureGenerator.h"
+#include <memory>
+#include <algorithm>
 
 using namespace tim;
 
-eastl::vector<eastl::unique_ptr<FractalNoise<WorleyNoise<vec2>>>> g_fractalWorley[4];
+std::vector<std::unique_ptr<FractalNoise<WorleyNoise<vec2>>>> g_fractalWorley[4];
 
 namespace
 {
@@ -92,7 +94,7 @@ tim::vec4 TextureGenerator::randColorf()
 void TextureGenerator::genWorleyNoise()
 {
 	using T = FractalNoise<WorleyNoise<vec2>>;
-	eastl::vector<std::future<void>> sync;
+	std::vector<std::future<void>> sync;
 	int seed = (int)time(NULL);
 	for (int i = 0; i < 4; ++i)
 	{
@@ -101,8 +103,8 @@ void TextureGenerator::genWorleyNoise()
 		for (auto& fractal : g_fractalWorley[i])
 		{
 			sync.push_back(g_threadPool.push([&](int) {
-				auto gen = eastl::make_unique<T>( 4, WorleyNoiseInstancer<WorleyNoise<vec2>>(25 << i, 4, 1, seed++) );
-				eastl::swap(gen, fractal);
+				auto gen = std::make_unique<T>( 4, WorleyNoiseInstancer<WorleyNoise<vec2>>(25 << i, 4, 1, seed++) );
+				std::swap(gen, fractal);
 			}));
 		}
 	}
@@ -111,12 +113,12 @@ void TextureGenerator::genWorleyNoise()
 		fut.wait();
 }
 
-eastl::vector<tim::ImageAlgorithm<tim::bvec4>> TextureGenerator::generateMips(const ImageAlgorithm<bvec4>& img, uint nbMips)
+std::vector<tim::ImageAlgorithm<tim::bvec4>> TextureGenerator::generateMips(const ImageAlgorithm<bvec4>& img, uint nbMips)
 {
 	if(nbMips == 0)
 		nbMips = log2_ui(img.size().x()) - 1;
 
-	eastl::vector<tim::ImageAlgorithm<tim::bvec4>> result;
+	std::vector<tim::ImageAlgorithm<tim::bvec4>> result;
 
 	auto fimg = img.map([](bvec4 color) { return vec4(color[0], color[1], color[2], color[3]); });
 
@@ -132,7 +134,7 @@ eastl::vector<tim::ImageAlgorithm<tim::bvec4>> TextureGenerator::generateMips(co
 vec4 TextureGenerator::getColorFromBank(ColorBank col)
 {
 	vec3 select = { _random(_randEngine), _random(_randEngine), _random(_randEngine) };
-	eastl::vector<vec3> BANK;
+	std::vector<vec3> BANK;
 
 	switch (col)
 	{
@@ -160,7 +162,7 @@ vec4 TextureGenerator::getColorFromBank(ColorBank col)
 	return vec4(interpolate(BANK[index1], BANK[index2], select.z()), 1);
 }
 
-Palette TextureGenerator::genPalette(const eastl::vector<ColorBank>& choices, uivec2 nbColorsRange)
+Palette TextureGenerator::genPalette(const std::vector<ColorBank>& choices, uivec2 nbColorsRange)
 {
 	std::uniform_int_distribution<uint> randInt(nbColorsRange.x(), nbColorsRange.y());
 	Palette palette;

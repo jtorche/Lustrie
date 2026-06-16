@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Planet.h"
+#include <memory>
 #include "graphics/RendererStruct.h"
 
 class PlanetPlants
@@ -8,7 +9,7 @@ class PlanetPlants
 public:
 	PlanetPlants(int seed);
 	
-	void cull(const tim::Camera&, eastl::vector<ObjectInstance>&, eastl::vector<ObjectInstance>&);
+	void cull(const tim::Camera&, std::vector<ObjectInstance>&, std::vector<ObjectInstance>&);
 
 	void createTree(int sizeCategorie, int number);
 	void populatePlant(Planet&, size_t plantIndex, int nbInstance);
@@ -23,15 +24,15 @@ private:
 			Lod(const Lod&) = default;
 			Lod& operator=(const Lod&) = default;
 
-			eastl::shared_ptr<MeshBuffers> meshs[2];
+			std::shared_ptr<MeshBuffers> meshs[2];
 			float distance;
 		};
-		eastl::vector<Lod> lods;
+		std::vector<Lod> lods;
 		Sphere boundingSphere;
 	};
 
 	std::mutex _treeVectorMutex;
-	eastl::vector<Plant> _plants;
+	std::vector<Plant> _plants;
 
 	struct Instance
 	{
@@ -40,5 +41,5 @@ private:
 		size_t indexPlant;
 	};
 
-	eastl::vector<Instance> _instances;
+	std::vector<Instance> _instances;
 };

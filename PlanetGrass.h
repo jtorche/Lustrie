@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Vector.h"
+#include <array>
 #include "Planet.h"
 
 class PlanetGrass
@@ -8,7 +9,7 @@ class PlanetGrass
 public:
 	PlanetGrass(Planet&, int seed = 42);
 	
-	void cull(const tim::Camera&, eastl::vector<ObjectInstance>&);
+	void cull(const tim::Camera&, std::vector<ObjectInstance>&);
 
 private:
 	int _seed;
@@ -20,14 +21,14 @@ private:
 	struct Batch
 	{
 		vec3 start, base1, base2;
-		eastl::vector<eastl::pair<vec3, vec3>> vertex_normal;
+		std::vector<std::pair<vec3, vec3>> vertex_normal;
 		MeshBuffers mesh;
 		Sphere sphere;
 	};
 
 	MeshBuffers _grassMesh[NB_SIDE];
 	static constexpr int NB_SPLIT = 16;
-	eastl::array<Batch, NB_SPLIT*NB_SPLIT> _batchSide[NB_SIDE];
+	std::array<Batch, NB_SPLIT*NB_SPLIT> _batchSide[NB_SIDE];
 
 private:
 	void prepare();

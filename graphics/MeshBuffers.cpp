@@ -1,6 +1,8 @@
 #include "MeshBuffers.h"
+#include <memory>
+#include <algorithm>
 
-MeshBuffers::MeshBuffers(const eastl::shared_ptr<dx12::GpuBuffer>& vb, const eastl::shared_ptr<dx12::GpuBuffer>& ib , size_t offset, int64_t numIndices)
+MeshBuffers::MeshBuffers(const std::shared_ptr<dx12::GpuBuffer>& vb, const std::shared_ptr<dx12::GpuBuffer>& ib , size_t offset, int64_t numIndices)
 	: _vb(vb), _ib(ib), _offset(offset), _numIndexes(numIndices)
 {
 
@@ -27,7 +29,7 @@ MeshBuffers MeshBuffers::createFromMesh(const tim::BaseMesh& mesh, uint64_t* fen
 
 	for (size_t i = 0; i < bufferSize; i += (1 << 20))
 	{
-		size_t numBytes = eastl::min(size_t(1 << 20), bufferSize - i);
+		size_t numBytes = std::min(size_t(1 << 20), bufferSize - i);
 		commandContext.initBuffer(*vb, buffer_data + i, numBytes, i);
 
 		if (i > 0 && i % (20 << 20) == 0 && fence == nullptr)
@@ -40,7 +42,7 @@ MeshBuffers MeshBuffers::createFromMesh(const tim::BaseMesh& mesh, uint64_t* fen
 
 	for (size_t i = 0; i < bufferSize; i += (1 << 20))
 	{
-		size_t numBytes = eastl::min(size_t(1 << 20), bufferSize - i);
+		size_t numBytes = std::min(size_t(1 << 20), bufferSize - i);
 		commandContext.initBuffer(*ib, buffer_data + i, numBytes, i);
 
 		if (i > 0 && i % (20 << 20) == 0 && fence == nullptr)
@@ -53,20 +55,20 @@ MeshBuffers MeshBuffers::createFromMesh(const tim::BaseMesh& mesh, uint64_t* fen
 		commandContext.finish(true);
 		
 	MeshBuffers res;
-	res._vb = eastl::shared_ptr<dx12::GpuBuffer>(vb);
-	res._ib = eastl::shared_ptr<dx12::GpuBuffer>(ib);
+	res._vb = std::shared_ptr<dx12::GpuBuffer>(vb);
+	res._ib = std::shared_ptr<dx12::GpuBuffer>(ib);
 	return res;
 }
 
-eastl::shared_ptr<dx12::GpuBuffer> MeshBuffers::createVertexBufferFromMesh(const tim::BaseMesh& mesh, uint64_t* fence)
+std::shared_ptr<dx12::GpuBuffer> MeshBuffers::createVertexBufferFromMesh(const tim::BaseMesh& mesh, uint64_t* fence)
 {
 	if (mesh.nbVertices() <= 0)
-		return eastl::shared_ptr<dx12::GpuBuffer>();
+		return std::shared_ptr<dx12::GpuBuffer>();
 
 	size_t bufferSize = mesh.requestBufferSize(true, true);
 
 	if (bufferSize == 0)
-		return eastl::shared_ptr<dx12::GpuBuffer>();
+		return std::shared_ptr<dx12::GpuBuffer>();
 
 	dx12::GpuBuffer* vb = new dx12::GpuBuffer(mesh.nbVertices(), bufferSize / mesh.nbVertices());
 
@@ -82,5 +84,5 @@ eastl::shared_ptr<dx12::GpuBuffer> MeshBuffers::createVertexBufferFromMesh(const
 	else
 		commandContext.finish(true);
 
-	return eastl::shared_ptr<dx12::GpuBuffer>(vb);
+	return std::shared_ptr<dx12::GpuBuffer>(vb);
 }

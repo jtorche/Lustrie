@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EASTL/array.h>
+#include <array>
 #include "Vector.h"
 #include "core/ImageAlgorithm.h"
 
@@ -11,7 +11,7 @@ namespace tim
         struct SimplexNoiseBaseBase
         {
             static int fastfloor(float x) { return x>0 ? (int)x : (int)x-1; }
-            static eastl::array<vec3, 12> grad3;
+            static std::array<vec3, 12> grad3;
         };
 
         template<class Point>
@@ -23,14 +23,14 @@ namespace tim
                 for(int i=0 ; i<256 ; ++i)
                     _perm[i] = i;
 
-                eastl::shuffle(_perm.begin(), _perm.begin()+256, std::mt19937(seed));
-                eastl::copy(_perm.begin(), _perm.begin()+256, _perm.begin()+256);
+                std::shuffle(_perm.begin(), _perm.begin()+256, std::mt19937(seed));
+                std::copy(_perm.begin(), _perm.begin()+256, _perm.begin()+256);
             }
 
             SimplexNoiseBase(const SimplexNoiseBase&) = default;
             SimplexNoiseBase& operator=(const SimplexNoiseBase&) = default;
         protected:
-            eastl::array<int, 512> _perm; // setup at the initialization
+            std::array<int, 512> _perm; // setup at the initialization
             Point _scale;
         };
     }

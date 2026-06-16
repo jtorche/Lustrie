@@ -2,6 +2,7 @@
 #define SPHEREVOLUME_H
 
 #include "Vector.h"
+#include <algorithm>
 #include "Matrix.h"
 
 namespace tim

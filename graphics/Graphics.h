@@ -1,6 +1,7 @@
 #pragma once
 
 #include "API.h"
+#include <memory>
 #include "core/NonCopyable.h"
 #include "math/Vector.h"
 #include "math/Matrix.h"
@@ -27,10 +28,10 @@ public:
 	void close();
 
 	//Material createForwardMaterial(bool cullFace = true, bool wireFrame = false);
-	Material createTexturedForwardMaterial(const char* shader, const eastl::shared_ptr<TexturePool>& pool = eastl::make_shared<TexturePool>(16),
+	Material createTexturedForwardMaterial(const char* shader, const std::shared_ptr<TexturePool>& pool = std::make_shared<TexturePool>(16),
 										   bool cullFace = true, bool wireFrame = false);
 
-	Material createPointToTriangleGSForwardMaterial(const char* shader, const eastl::shared_ptr<TexturePool>& pool = eastl::make_shared<TexturePool>(16),
+	Material createPointToTriangleGSForwardMaterial(const char* shader, const std::shared_ptr<TexturePool>& pool = std::make_shared<TexturePool>(16),
 										   bool cullFace = true, bool wireFrame = false);
 
 	static ProxyTexture g_dummyTexture;
@@ -42,6 +43,6 @@ private:
 	dx12::Renderer _renderer;
 	float _timeElapsed;
 
-	eastl::shared_ptr<dx12::RootSignature> _standartRootSignature;
+	std::shared_ptr<dx12::RootSignature> _standartRootSignature;
 };
 

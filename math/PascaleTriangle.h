@@ -1,21 +1,21 @@
 #pragma once
 
 #include "core\type.h"
-#include <EASTL\vector.h>
+#include <vector>
 
 namespace tim
 {
     class PascaleTriangle
     {
     private:
-        eastl::vector<eastl::vector<int>> _data; // This is the actual data
+        std::vector<std::vector<int>> _data; // This is the actual data
 
     public:
         PascaleTriangle(uint dummy)
         {
             if (dummy > 0)
             {
-				eastl::vector<int> row;
+				std::vector<int> row;
                 _data.resize(dummy);
                 // The first row
                 row.resize(1);
@@ -51,7 +51,7 @@ namespace tim
             return result;
         }
 
-        const eastl::vector<int>& getRow(uint dummy) const
+        const std::vector<int>& getRow(uint dummy) const
         {
             return _data[dummy];
         }

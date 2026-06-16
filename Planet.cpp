@@ -1,11 +1,13 @@
 #include "Planet.h"
+#include <memory>
+#include <algorithm>
 #include "math/Frustum.h"
 
 using namespace tim;
 
 const float Planet::NoiseClosure::BASE_SIZE = 60.f;
 
-eastl::unique_ptr<tim::FractalNoise<tim::WorleyNoise<tim::vec3>>> g_fractalWorley3d;
+std::unique_ptr<tim::FractalNoise<tim::WorleyNoise<tim::vec3>>> g_fractalWorley3d;
 
 tim::vec3 Planet::computeUp(tim::vec3 pos)
 {
@@ -19,7 +21,7 @@ Planet::Planet(uint resolution, const Parameter& param, int seedIn) : _parameter
 		applyNoise(_noise.noiseFun(), 1.f, LOW_RES_PLANET);
 
 		/* Compute normal */
-		eastl::vector<BaseMesh*> join(NB_SIDE);
+		std::vector<BaseMesh*> join(NB_SIDE);
 		for (int i = 0; i < NB_SIDE; ++i)
 			join[i] = &(this->_planetSideLowRes[i]);
 		BaseMesh::computeJoinNormals(join, 1);
@@ -88,7 +90,7 @@ float Planet::isFloor(vec3 v) const
 	return _noise.isFloor(v*0.5f + 0.5f);
 }
 
-void Planet::cull(const tim::Camera& camera, eastl::vector<ObjectInstance>& visibleBatch)
+void Planet::cull(const tim::Camera& camera, std::vector<ObjectInstance>& visibleBatch)
 {
 	if (!_isLowResReady)
 		return;
@@ -118,7 +120,7 @@ void Planet::cull(const tim::Camera& camera, eastl::vector<ObjectInstance>& visi
 					vec3 ray = _planetSide[side].position(_grid[i][j][0][0].indexes[0]) -
 							   _planetSide[side].position(_grid[i][j][0].back().indexes[0]);
 
-					if (frust.collide(Sphere(center, max(3*ray.length(), _parameter.sizePlanet.y()*0.5f))))
+					if (frust.collide(Sphere(center, std::max(3*ray.length(), _parameter.sizePlanet.y()*0.5f))))
 						visibleBatch.push_back({ &_planetMesh[side][i][j][distanceToLod((center - camera.pos).length())], transform, MaterialParameter() });
 				}
 			}
@@ -258,12 +260,12 @@ tim::UVMesh Planet::generateMesh(vec3 pos) const
 void Planet::generateSideMeshBuffers(int side)
 {
 	uint indexOffsetlod[NB_LODS] = { 0 };
-	GridType < eastl::shared_ptr<dx12::GpuBuffer> > indexBufferAllLods;
+	GridType < std::shared_ptr<dx12::GpuBuffer> > indexBufferAllLods;
 
 	uint64_t fences[2] = { 0 };
 
 	_planetSide[side].computeNormals(false, 16);
-	eastl::shared_ptr<dx12::GpuBuffer> vb = MeshBuffers::createVertexBufferFromMesh(_planetSide[side], &fences[0]);
+	std::shared_ptr<dx12::GpuBuffer> vb = MeshBuffers::createVertexBufferFromMesh(_planetSide[side], &fences[0]);
 
 	uint nbIndexConcat = 0;
 	for (uint i = 0; i < NB_LODS; ++i)
@@ -288,7 +290,7 @@ void Planet::generateSideMeshBuffers(int side)
 				commandContext.initBuffer(*ib, tmp.indexData().data(), tmp.nbFaces() * 3 * sizeof(uint), indexOffsetlod[lod] * sizeof(uint));
 			}
 
-			indexBufferAllLods[i][j] = eastl::shared_ptr<dx12::GpuBuffer>(ib);
+			indexBufferAllLods[i][j] = std::shared_ptr<dx12::GpuBuffer>(ib);
 			for (uint lod = 0; lod < NB_LODS; ++lod)
 				_planetMesh[side][i][j][lod] = MeshBuffers(vb, indexBufferAllLods[i][j], indexOffsetlod[lod], _grid[i][j][lod].size() * 3);
 		}

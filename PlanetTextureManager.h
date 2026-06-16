@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TextureGenerator.h"
+#include <memory>
 #include "graphics\TexturePool.h"
 #include "geometry\Palette.h"
 
@@ -20,7 +21,7 @@ public:
 
 private:
 	int _seed;
-	eastl::unique_ptr<TexturePool> _textures;
-	eastl::vector<ProxyTexture> _allTextures;
+	std::unique_ptr<TexturePool> _textures;
+	std::vector<ProxyTexture> _allTextures;
 	std::mutex _lock;
 };

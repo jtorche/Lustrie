@@ -1,7 +1,7 @@
 #pragma once
 
 #include "API.h"
-#include <EASTL/shared_ptr.h>
+#include <memory>
 #include <geometry\Mesh.h>
 
 class MeshBuffers
@@ -17,13 +17,13 @@ public:
 	MeshBuffers() = default;
 	MeshBuffers(const MeshBuffers&) = default;
 	MeshBuffers& operator=(const MeshBuffers&) = default;
-	MeshBuffers(const eastl::shared_ptr<dx12::GpuBuffer>& vb, const eastl::shared_ptr<dx12::GpuBuffer>& ib, size_t offset=0, int64_t numIndices=0);
+	MeshBuffers(const std::shared_ptr<dx12::GpuBuffer>& vb, const std::shared_ptr<dx12::GpuBuffer>& ib, size_t offset=0, int64_t numIndices=0);
 
-	const eastl::shared_ptr<dx12::GpuBuffer>& vb() const { return _vb; }
-	const eastl::shared_ptr<dx12::GpuBuffer>& ib() const { return _ib; }
+	const std::shared_ptr<dx12::GpuBuffer>& vb() const { return _vb; }
+	const std::shared_ptr<dx12::GpuBuffer>& ib() const { return _ib; }
 
 	static MeshBuffers createFromMesh(const tim::BaseMesh&, uint64_t* fence = nullptr, tim::uint nbPointInFace = 3, bool useNormal = true, bool useUV = true);
-	static eastl::shared_ptr<dx12::GpuBuffer> createVertexBufferFromMesh(const tim::BaseMesh&, uint64_t* fence = nullptr);
+	static std::shared_ptr<dx12::GpuBuffer> createVertexBufferFromMesh(const tim::BaseMesh&, uint64_t* fence = nullptr);
 
 	void setOffset(size_t);
 	void setNumIndices(int64_t);
@@ -34,7 +34,7 @@ public:
 	Topology topology() const;
 
 private:
-	eastl::shared_ptr<dx12::GpuBuffer> _vb, _ib;
+	std::shared_ptr<dx12::GpuBuffer> _vb, _ib;
 	size_t _offset = 0;
 	int64_t _numIndexes = -1;
 	Topology _topology = Triangles;

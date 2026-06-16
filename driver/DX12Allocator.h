@@ -9,9 +9,10 @@
 #pragma once
 
 #include "DX12Resource.h"
-#include <EASTL/vector.h>
-#include <EASTL/string.h>
-#include <EASTL/queue.h>
+#include <memory>
+#include <vector>
+#include <string>
+#include <queue>
 #include <mutex>
 #include <core/type.h>
 
@@ -89,10 +90,10 @@ namespace dx12
 		LinearAllocationPage* createNewPage(size_t pageSize = 0);
 
 		// Discarded pages will get recycled.  This is for fixed size pages.
-		void discardPages(uint64_t fence, const eastl::vector<LinearAllocationPage*>& pages);
+		void discardPages(uint64_t fence, const std::vector<LinearAllocationPage*>& pages);
 
 		// Freed pages will be destroyed once their fence has passed.  This is for single-use, "large" pages.
-		void freeLargePages(uint64_t fence, const eastl::vector<LinearAllocationPage*>& pages);
+		void freeLargePages(uint64_t fence, const std::vector<LinearAllocationPage*>& pages);
 
 		void destroy() { _pagePool.clear(); }
 
@@ -100,10 +101,10 @@ namespace dx12
 		static LinearAllocatorType _allocatorTypeEnumerator;
 
 		LinearAllocatorType _allocatorType;
-		eastl::vector<std::unique_ptr<LinearAllocationPage> > _pagePool;
-		eastl::queue<std::pair<uint64_t, LinearAllocationPage*> > _retiredPages;
-		eastl::queue<std::pair<uint64_t, LinearAllocationPage*> > _deletionQueue;
-		eastl::queue<LinearAllocationPage*> _availablePages;
+		std::vector<std::unique_ptr<LinearAllocationPage> > _pagePool;
+		std::queue<std::pair<uint64_t, LinearAllocationPage*> > _retiredPages;
+		std::queue<std::pair<uint64_t, LinearAllocationPage*> > _deletionQueue;
+		std::queue<LinearAllocationPage*> _availablePages;
 		std::mutex _mutex;
 	};
 
@@ -137,8 +138,8 @@ namespace dx12
 		size_t _curOffset;
 		LinearAllocationPage* _curPage;
 
-		eastl::vector<LinearAllocationPage*> _retiredPages;
-		eastl::vector<LinearAllocationPage*> _largePageList;
+		std::vector<LinearAllocationPage*> _retiredPages;
+		std::vector<LinearAllocationPage*> _largePageList;
 	};
 	
 }

@@ -3,7 +3,7 @@
 #include "DX12.h"
 #include <core/NonCopyable.h>
 #include <mutex>
-#include <EASTL/queue.h>
+#include <queue>
 
 namespace dx12
 {
@@ -42,8 +42,8 @@ namespace dx12
 
 		struct QueueAllocatorPool
 		{
-			eastl::vector<ID3D12CommandAllocator*> allocatorPool;
-			eastl::queue<eastl::pair<uint64_t, ID3D12CommandAllocator*>> readyAllocator;
+			std::vector<ID3D12CommandAllocator*> allocatorPool;
+			std::queue<std::pair<uint64_t, ID3D12CommandAllocator*>> readyAllocator;
 			std::mutex poolMutex;
 			CommandQueueType type;
 			ID3D12Device* device;
@@ -72,7 +72,7 @@ namespace dx12
 		void waitForFence(uint64_t);
 		void sync();
 
-		eastl::pair<ID3D12GraphicsCommandList*, ID3D12CommandAllocator*> createCommandList(CommandQueue::CommandQueueType);
+		std::pair<ID3D12GraphicsCommandList*, ID3D12CommandAllocator*> createCommandList(CommandQueue::CommandQueueType);
 		ID3D12CommandAllocator* createCommandAllocator(CommandQueue::CommandQueueType);
 
 	private:

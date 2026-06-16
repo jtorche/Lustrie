@@ -2,9 +2,9 @@
 
 #include <d3d12.h>
 #include <d3dx12.h>
-#include <EASTL/vector.h>
-#include <EASTL/array.h>
-#include <EASTL/string.h>
+#include <vector>
+#include <array>
+#include <string>
 #include <core/type.h>
 
 #include <dxgi1_4.h>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <EASTL/functional.h>
-#include <EASTL/vector.h>
+#include <functional>
+#include <vector>
 #include "core/type.h"
 #include "core/ImageAlgorithm.h"
 
@@ -11,7 +11,7 @@ namespace tim
     class FractalNoise
     {
     public:
-        FractalNoise(int numLayer, eastl::function<Noise(uint)> instancer)
+        FractalNoise(int numLayer, std::function<Noise(uint)> instancer)
         {
             for(int i=0 ; i<numLayer ; ++i)
                 _layers.push_back(instancer(i));
@@ -19,7 +19,7 @@ namespace tim
 
 		~FractalNoise() = default;
 
-        float noise(typename Noise::Point v, eastl::function<float(float)> fun = eastl::function<float(float)>()) const
+        float noise(typename Noise::Point v, std::function<float(float)> fun = std::function<float(float)>()) const
         {
             float res=0;
             float coef = 0.5f;
@@ -33,7 +33,7 @@ namespace tim
             return res;
         }
 
-        ImageAlgorithm<float> generate(uivec2 res, eastl::function<float(float)> fun = eastl::function<float(float)>()) const
+        ImageAlgorithm<float> generate(uivec2 res, std::function<float(float)> fun = std::function<float(float)>()) const
         {
             ImageAlgorithm<float> img(res);
             vec2 delta = vec2(1.f / (res.x()-1),1.f / (res.y()-1));
@@ -46,6 +46,6 @@ namespace tim
         }
 
     private:
-        eastl::vector<Noise> _layers;
+        std::vector<Noise> _layers;
     };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <EASTL/vector.h>
+#include <vector>
+#include <algorithm>
 #include "math/Vector.h"
 #include "math/Matrix.h"
 
@@ -47,14 +48,14 @@ namespace tim
         static Curve parametrization(vec2 range, int numPoints, const F1&&, const F2&&, const F3&&);
 
     private:
-        eastl::vector<vec4> _points;
+        std::vector<vec4> _points;
         bool _closed = false;
 
     private:
-        static void tesselateCylindre(BaseMesh&, const eastl::vector<uint>& bottom, const eastl::vector<uint>& top, uint resolution, bool triangulate, bool cut);
-        static void tesselateCone(BaseMesh&, const eastl::vector<uint>& bottom, uint top, uint resolution, bool cut);
+        static void tesselateCylindre(BaseMesh&, const std::vector<uint>& bottom, const std::vector<uint>& top, uint resolution, bool triangulate, bool cut);
+        static void tesselateCone(BaseMesh&, const std::vector<uint>& bottom, uint top, uint resolution, bool cut);
 
-        static void aligneCircle(const eastl::vector<eastl::pair<vec3,vec2>>&, eastl::vector<eastl::pair<vec3,vec2>>&);
+        static void aligneCircle(const std::vector<std::pair<vec3,vec2>>&, std::vector<std::pair<vec3,vec2>>&);
 
         template<class RadiusFun, class TypeMesh>
         TypeMesh convertToMesh(const RadiusFun&,  uint resolution, bool mergeLast, bool triangle, bool cut, bool uniform_uv=false) const;
@@ -114,10 +115,10 @@ namespace tim
 			return mesh;
 
         float timeStep = 1.f / (_points.size()-1);
-        eastl::vector<eastl::vector<uint>> pointIndexes(_points.size(), eastl::vector<uint>(resolution+(cut ? 1:0)));
+        std::vector<std::vector<uint>> pointIndexes(_points.size(), std::vector<uint>(resolution+(cut ? 1:0)));
 		uint curIndex = 0;
 
-        eastl::vector<eastl::pair<vec3,vec2>> prevPts;
+        std::vector<std::pair<vec3,vec2>> prevPts;
         float accSizeCurve = 0;
 
 		for (size_t i = 0; i<_points.size() + 1; ++i)
@@ -141,7 +142,7 @@ namespace tim
 			{
 				if (i < _points.size())
 				{
-                    eastl::vector<eastl::pair<vec3,vec2>> newPts;
+                    std::vector<std::pair<vec3,vec2>> newPts;
                     float accAroundCurve=0;
                     for (uint j = 0; j < resolution+(cut ? 1:0); ++j)
 					{

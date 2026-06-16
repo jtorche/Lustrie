@@ -1,4 +1,5 @@
 #include "Sphere.h"
+#include <algorithm>
 
 namespace tim
 {

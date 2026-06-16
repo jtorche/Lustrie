@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include "Sphere.h"
 
-#include <EASTL/vector.h>
+#include <vector>
 
 namespace tim
 {
@@ -55,7 +55,7 @@ namespace tim
         bool collide(const vec3&) const;
 
     private:
-        eastl::vector<Plan> _plans;
+        std::vector<Plan> _plans;
 
         //vec3 getBoxVertexP(const Box&, const vec3&) const;
         //vec3 getBoxVertexN(const Box&, const vec3&) const;

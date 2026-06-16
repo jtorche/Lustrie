@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Vector.h"
+#include <memory>
 #include "math\FractalNoise.h"
 #include "math\WorleyNoise.h"
 #include "math\SimplexNoise.h"
@@ -9,7 +10,7 @@
 #include <core/ctpl_stl.h>
 extern ctpl::thread_pool g_threadPool;
 
-extern eastl::vector<eastl::unique_ptr<tim::FractalNoise<tim::WorleyNoise<tim::vec2>>>> g_fractalWorley[4];
+extern std::vector<std::unique_ptr<tim::FractalNoise<tim::WorleyNoise<tim::vec2>>>> g_fractalWorley[4];
 
 class TextureGenerator
 {
@@ -27,13 +28,13 @@ public:
 	
 	static void genWorleyNoise();
 
-	static eastl::vector<tim::ImageAlgorithm<tim::bvec4>> generateMips(const tim::ImageAlgorithm<tim::bvec4>&, tim::uint nbMips = 0);
+	static std::vector<tim::ImageAlgorithm<tim::bvec4>> generateMips(const tim::ImageAlgorithm<tim::bvec4>&, tim::uint nbMips = 0);
 
 	enum ColorBank : int
 	{ BROWN = 0, ORANGE, ORANGE2, GREEN, GREEN2, WHITE, PURPLE, PURPLE2, NB_COLOR };
 
 	tim::vec4 getColorFromBank(ColorBank);
-	tim::Palette genPalette(const eastl::vector<ColorBank>&, tim::uivec2 nbColors);
+	tim::Palette genPalette(const std::vector<ColorBank>&, tim::uivec2 nbColors);
 
 private:
 	int _seed;

@@ -1,5 +1,6 @@
 
 #include "DX12Renderer.h"
+#include <memory>
 #include <core/Chrono.h>
 #include <d3dcompiler.h>
 #include "core/Logger.h"
@@ -16,7 +17,7 @@
 #include <D3d12sdklayers.h>
 #include <atlbase.h>
 
-using namespace eastl;
+using namespace std;
 using namespace tim;
 using Microsoft::WRL::ComPtr;
 
@@ -42,7 +43,7 @@ namespace dx12
 		for (const AdapterInfo& desc : adapters)
 		{
 			std::cout << desc.name << ", Usable memory:" << (desc.videoMemory / (1 << 20)) << "MB" << std::endl;
-			if (eastl::string(desc.name).find("NVIDIA") != eastl::string::npos)
+			if (std::string(desc.name).find("NVIDIA") != std::string::npos)
 				selectedAdapter = desc.adapter;
 		}
 
@@ -57,7 +58,7 @@ namespace dx12
 
 		g_device = _device;
 
-		_commandQueueManager = eastl::make_unique<CommandQueueManager>(_device);
+		_commandQueueManager = std::make_unique<CommandQueueManager>(_device);
 		g_commandQueues = _commandQueueManager.get();
 
 		_commandContext = static_cast<GraphicsCommandContext*>(&CommandContext::AllocContext(CommandQueue::DIRECT));
@@ -164,7 +165,7 @@ namespace dx12
 		_commandQueueManager->waitForFence(_fenceValue[_bufferIndex]);
 	}
 
-	void Renderer::render(const Material& material, const eastl::vector<ObjectInstance>& object)
+	void Renderer::render(const Material& material, const std::vector<ObjectInstance>& object)
 	{	
 		if (object.empty())
 			return;
@@ -294,7 +295,7 @@ namespace dx12
 		return descriptions;
 	}
 
-	void Renderer::createSwapChain(int nbBuffers, const eastl::vector<AdapterInfo>& adapters, const InitRendererInfo& info)
+	void Renderer::createSwapChain(int nbBuffers, const std::vector<AdapterInfo>& adapters, const InitRendererInfo& info)
 	{
 		// enumerate the primary adapter output (monitor)
 
@@ -401,7 +402,7 @@ namespace dx12
 		ComPtr<ID3DBlob> shaderByteCode;
 		ComPtr<ID3DBlob> error;
 
-		eastl::string shaderModel;
+		std::string shaderModel;
 		switch (type)
 		{
 		case ShaderType::VERTEX: shaderModel = "vs_5_1";

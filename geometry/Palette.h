@@ -1,6 +1,7 @@
 #pragma once
 
-#include <EASTL/array.h>
+#include <array>
+#include <algorithm>
 #include "math/Vector.h"
 #undef min
 #undef max
@@ -38,8 +39,8 @@ namespace tim
 
     private:
         static const int RESOLUTION = 1024;
-        eastl::array<bvec4, RESOLUTION> _colors;
-        eastl::array<bool, RESOLUTION> _filled = {{false}};
+        std::array<bvec4, RESOLUTION> _colors;
+        std::array<bool, RESOLUTION> _filled = {{false}};
 
         static vec4 tovec4(bvec4 c) { return vec4(c[0] / 255.f, c[1] / 255.f, c[2] / 255.f, c[3] / 255.f); }
         static bvec4 tobvec4(vec4 v) { return bvec4(byte(v[0] * 255.f + 0.5f), byte(v[1] * 255.f + 0.5f), byte(v[2] * 255.f + 0.5f), byte(v[3] * 255.f + 0.5f)); }

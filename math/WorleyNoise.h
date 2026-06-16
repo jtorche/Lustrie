@@ -3,18 +3,9 @@
 #include "core/type.h"
 #include "core/ImageAlgorithm.h"
 #include <random>
-#include <EASTL/sort.h>
-#include <EASTL/unique_ptr.h>
-#include <EASTL/deque.h>
-#include <EASTL/algorithm.h>
-
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
+#include <algorithm>
+#include <memory>
+#include <deque>
 
 namespace tim
 {
@@ -35,16 +26,16 @@ namespace tim
 
     private:
         int _nth;
-        eastl::vector<T> _points;
+        std::vector<T> _points;
         float _sqrtNbPoints;
 
         struct Node
         {
             Node *left, *right;
-            eastl::vector<uint> container;
+            std::vector<uint> container;
         };
 
-        eastl::deque<Node, EASTLAllocatorType, 256> _nodePool;
+        std::deque<Node> _nodePool;
         Node* _root = nullptr;
 
         void optimiseSpace(Node*, Point, float, uint depth, uint maxDepth);
@@ -71,7 +62,7 @@ namespace tim
 
     /** Worley Noise **/
 
-    template<class T> WorleyNoise<T>::WorleyNoise(uint nbPoints, int nth, int seed) : _nth(nth), _nodePool{}, _root{&_nodePool.push_back()}
+    template<class T> WorleyNoise<T>::WorleyNoise(uint nbPoints, int nth, int seed) : _nth(nth), _nodePool{}, _root{&_nodePool.emplace_back()}
     {
         std::mt19937 randEngine(seed);
         std::uniform_real_distribution<float> random(0,1);
@@ -85,7 +76,7 @@ namespace tim
         }
 
         int maxDepth = int(log2f(float(nbPoints)) / Point::Length + 0.5f);
-        maxDepth = min(8, max(0, maxDepth));
+        maxDepth = std::min(8, std::max(0, maxDepth));
         //std::cout << "maxdepth:" << maxDepth << " nbPts:" << nbPoints<<std::endl;
         optimiseSpace(_root, Point(0.5f), 0.5f, 0, maxDepth);
 
@@ -100,18 +91,18 @@ namespace tim
         if(_root == nullptr)
         {
             int nth = _nth>0 ? _nth:1;
-            eastl::vector<float> dists(_points.size());
+            std::vector<float> dists(_points.size());
             for(size_t i=0 ; i<_points.size() ; ++i)
                 dists[i] = (_points[i] - x).length2();
 
-            eastl::partial_sort(dists.begin(), dists.begin()+nth, dists.end());
+            std::partial_sort(dists.begin(), dists.begin()+nth, dists.end());
 
             result = sqrtf(dists[nth-1]);
         }
         else
             result = search(x, _root, Point(0.5f), 0.5f, 0);
 
-        return min(result*_sqrtNbPoints, 1.f);
+        return std::min(result*_sqrtNbPoints, 1.f);
     }
 
     namespace
@@ -147,8 +138,8 @@ namespace tim
         else
         {
             int state = depth % Point::Length;
-            node->left = &_nodePool.push_back();
-            node->right = &_nodePool.push_back();
+            node->left = &_nodePool.emplace_back();
+            node->right = &_nodePool.emplace_back();
 
             Point lcenter = center, rcenter = center;
             lcenter[state] -= size*0.5f;
@@ -189,7 +180,7 @@ namespace tim
             if(d < 0)
             {
                 int nth = _nth>0 ? _nth:1;
-                eastl::vector<float> dists;
+                std::vector<float> dists;
 
                 for(size_t i=0 ; i<node->container.size() ; ++i)
                 {
@@ -203,7 +194,7 @@ namespace tim
                 if(int(dists.size()) < nth)
                     return -1;
 
-                eastl::partial_sort(dists.begin(), dists.begin()+nth, dists.end());
+                std::partial_sort(dists.begin(), dists.begin()+nth, dists.end());
 
                 return sqrtf(dists[nth-1]);
             }
