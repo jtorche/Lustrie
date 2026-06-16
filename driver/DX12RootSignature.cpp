@@ -6,9 +6,9 @@ namespace dx12
 		const std::vector<D3D12_STATIC_SAMPLER_DESC>& samplers, D3D12_ROOT_SIGNATURE_FLAGS flags)
 	{
 		D3D12_ROOT_SIGNATURE_DESC rootDesc;
-		rootDesc.NumParameters = param.size();
+		rootDesc.NumParameters = (uint32_t)param.size();
 		rootDesc.pParameters = (const D3D12_ROOT_PARAMETER*)param.data();
-		rootDesc.NumStaticSamplers = samplers.size();
+		rootDesc.NumStaticSamplers = (uint32_t)samplers.size();
 		rootDesc.pStaticSamplers = samplers.data();
 		rootDesc.Flags = flags;
 

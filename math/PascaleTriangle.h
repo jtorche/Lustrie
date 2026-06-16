@@ -11,7 +11,7 @@ namespace tim
         std::vector<std::vector<int>> _data; // This is the actual data
 
     public:
-        PascaleTriangle(uint dummy)
+        PascaleTriangle(uint32_t dummy)
         {
             if (dummy > 0)
             {
@@ -30,11 +30,11 @@ namespace tim
                 // The other rows
                 if (_data.size() > 2)
                 {
-                    for (uint i = 2; i < _data.size(); i++)
+                    for (uint32_t i = 2; i < _data.size(); i++)
                     {
                         row.resize(i + 1); // Theoretically this should work faster than consecutive push_back()s
                         row.front() = 1;
-                        for (uint j = 1; j < row.size() - 1; j++)
+                        for (uint32_t j = 1; j < row.size() - 1; j++)
                             row[j] = _data.at(i - 1).at(j - 1) + _data.at(i - 1).at(j);
                         row.back() = 1;
                         _data[i] = row;
@@ -43,7 +43,7 @@ namespace tim
             }
         }
 
-        int getCoeff(uint dummy1, uint dummy2) const
+        int getCoeff(uint32_t dummy1, uint32_t dummy2) const
         {
             int result = 0;
             if ((dummy1 < _data.size()) && (dummy2 < _data.at(dummy1).size()))
@@ -51,7 +51,7 @@ namespace tim
             return result;
         }
 
-        const std::vector<int>& getRow(uint dummy) const
+        const std::vector<int>& getRow(uint32_t dummy) const
         {
             return _data[dummy];
         }

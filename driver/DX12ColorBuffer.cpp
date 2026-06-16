@@ -6,7 +6,7 @@ using namespace tim;
 
 namespace dx12
 {
-	/*void ColorBuffer::create(uivec2 res, uint numMips, DXGI_FORMAT format)
+	/*void ColorBuffer::create(uivec2 res, uint32_t numMips, DXGI_FORMAT format)
 	{
 		D3D12_RESOURCE_DESC desc = describeTex2D(res, 1, numMips, format, D3D12_RESOURCE_FLAG_NONE);
 

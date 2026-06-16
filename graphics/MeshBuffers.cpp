@@ -2,34 +2,34 @@
 #include <memory>
 #include <algorithm>
 
-MeshBuffers::MeshBuffers(const std::shared_ptr<dx12::GpuBuffer>& vb, const std::shared_ptr<dx12::GpuBuffer>& ib , size_t offset, int64_t numIndices)
+MeshBuffers::MeshBuffers(const std::shared_ptr<dx12::GpuBuffer>& vb, const std::shared_ptr<dx12::GpuBuffer>& ib , uint32_t offset, int64_t numIndices)
 	: _vb(vb), _ib(ib), _offset(offset), _numIndexes(numIndices)
 {
 
 }
 
-MeshBuffers MeshBuffers::createFromMesh(const tim::BaseMesh& mesh, uint64_t* fence, tim::uint nbPointInFace, bool useNormal, bool useUV)
+MeshBuffers MeshBuffers::createFromMesh(const tim::BaseMesh& mesh, uint64_t* fence, uint32_t nbPointInFace, bool useNormal, bool useUV)
 {
 	if (mesh.nbVertices() <= 0)
 		return MeshBuffers();
 
-	size_t bufferSize = mesh.requestBufferSize(useNormal, useUV);
+	uint32_t bufferSize = mesh.requestBufferSize(useNormal, useUV);
 	auto indexBuffer = mesh.indexData(nbPointInFace);
 
 	if (indexBuffer.empty() || bufferSize == 0)
 		return MeshBuffers();
 
 	dx12::GpuBuffer* vb = new dx12::GpuBuffer(mesh.nbVertices(), bufferSize / mesh.nbVertices());
-	dx12::GpuBuffer* ib = new dx12::GpuBuffer(indexBuffer.size(), sizeof(tim::uint));
+	dx12::GpuBuffer* ib = new dx12::GpuBuffer((uint32_t)indexBuffer.size(), sizeof(uint32_t));
 	
 	byte* buffer_data = new byte[bufferSize];
 	mesh.fillBuffer(buffer_data, true, true);
 
 	auto& commandContext = dx12::CommandContext::AllocContext(dx12::CommandQueue::COPY);
 
-	for (size_t i = 0; i < bufferSize; i += (1 << 20))
+	for (uint32_t i = 0; i < bufferSize; i += (1 << 20))
 	{
-		size_t numBytes = std::min(size_t(1 << 20), bufferSize - i);
+		uint32_t numBytes = std::min(uint32_t(1 << 20), bufferSize - i);
 		commandContext.initBuffer(*vb, buffer_data + i, numBytes, i);
 
 		if (i > 0 && i % (20 << 20) == 0 && fence == nullptr)
@@ -37,12 +37,12 @@ MeshBuffers MeshBuffers::createFromMesh(const tim::BaseMesh& mesh, uint64_t* fen
 	}
 
 	delete buffer_data;
-	bufferSize = indexBuffer.size() * sizeof(tim::uint);
+	bufferSize = (uint32_t)indexBuffer.size() * sizeof(uint32_t);
 	buffer_data = (byte*)indexBuffer.data();
 
-	for (size_t i = 0; i < bufferSize; i += (1 << 20))
+	for (uint32_t i = 0; i < bufferSize; i += (1 << 20))
 	{
-		size_t numBytes = std::min(size_t(1 << 20), bufferSize - i);
+		uint32_t numBytes = std::min(uint32_t(1 << 20), bufferSize - i);
 		commandContext.initBuffer(*ib, buffer_data + i, numBytes, i);
 
 		if (i > 0 && i % (20 << 20) == 0 && fence == nullptr)
@@ -65,7 +65,7 @@ std::shared_ptr<dx12::GpuBuffer> MeshBuffers::createVertexBufferFromMesh(const t
 	if (mesh.nbVertices() <= 0)
 		return std::shared_ptr<dx12::GpuBuffer>();
 
-	size_t bufferSize = mesh.requestBufferSize(true, true);
+	uint32_t bufferSize = mesh.requestBufferSize(true, true);
 
 	if (bufferSize == 0)
 		return std::shared_ptr<dx12::GpuBuffer>();

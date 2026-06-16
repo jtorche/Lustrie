@@ -10,7 +10,7 @@ namespace tim
     class Sphere
     {
     public:
-        static Sphere computeSphere(const float* ptr, uint size, uint stride=1);
+        static Sphere computeSphere(const float* ptr, uint32_t size, uint32_t stride=1);
 
         Sphere();
         Sphere(const vec3&, float);

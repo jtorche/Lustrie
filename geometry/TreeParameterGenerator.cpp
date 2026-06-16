@@ -285,9 +285,9 @@ LTree::Parameter LTree::getPredefinedTree(PredefinedTree tree)
 			p.naturalBranchBending = LTree::GaussPDF(0.02f, 0.003f, { 0, 0.04f });
 
 			p.meshing = getPredefinedMeshing(VBIG);
-			p.meshing.branchThicknessDecay *= 0.9;
-			p.meshing.alongBranchThicknessDecay *= 0.9;
-			p.meshing.initialBranchThickness *= 0.7;
+			p.meshing.branchThicknessDecay *= 0.9f;
+			p.meshing.alongBranchThicknessDecay *= 0.9f;
+			p.meshing.initialBranchThickness *= 0.7f;
 			break;
     }
     return p;

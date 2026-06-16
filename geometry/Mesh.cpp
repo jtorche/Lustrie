@@ -9,7 +9,7 @@ namespace tim
 
 /* BasicMesh */
 
-vec3 BaseMesh::position(uint index) const
+vec3 BaseMesh::position(uint32_t index) const
 {
     if(index < _vertices.size())
         return _vertices[index];
@@ -22,8 +22,8 @@ BaseMesh& BaseMesh::operator+=(const BaseMesh& mesh)
     if(_vertices.empty())
         return (*this = mesh);
 
-    uint startIndex = _vertices.size();
-    for(size_t i=0 ; i<mesh._vertices.size() ; ++i)
+    uint32_t startIndex = (uint32_t)_vertices.size();
+    for(uint32_t i=0 ; i<mesh._vertices.size() ; ++i)
     {
         _vertices.push_back(mesh._vertices[i]);
 
@@ -34,7 +34,7 @@ BaseMesh& BaseMesh::operator+=(const BaseMesh& mesh)
             _texCoords.push_back(mesh._texCoords[i]);
     }
 
-    for(size_t i=0 ; i<mesh._faces.size() ; ++i)
+    for(uint32_t i=0 ; i<mesh._faces.size() ; ++i)
     {
         _faces.push_back({{mesh._faces[i].indexes[0] + startIndex,
                            mesh._faces[i].indexes[1] + (mesh._faces[i].nbIndexes>1?startIndex:0),
@@ -135,10 +135,10 @@ BaseMesh& BaseMesh::computeNormals(bool correctSeems, int smooth)
 
     buildVertexFaceMap(correctSeems);
 
-    for(size_t i=0 ; i<_vertices.size() ; ++i)
+    for(uint32_t i=0 ; i<_vertices.size() ; ++i)
     {
         vec3 n;
-        for(uint faceIndex : _vertexToFaces[i])
+        for(uint32_t faceIndex : _vertexToFaces[i])
             n += faceNormal(faceIndex);
 
         if(n != vec3(0,0,0))
@@ -150,10 +150,10 @@ BaseMesh& BaseMesh::computeNormals(bool correctSeems, int smooth)
 		std::vector<vec3> tmpNormals(_vertices.size());
 		for (int s = 0; s < smooth; ++s)
 		{
-			for (size_t i = 0; i < _vertices.size(); ++i)
+			for (uint32_t i = 0; i < _vertices.size(); ++i)
 			{
-				vec3 n = _normals[i]; uint nb = 1;
-				for (uint faceIndex : _vertexToFaces[i])
+				vec3 n = _normals[i]; uint32_t nb = 1;
+				for (uint32_t faceIndex : _vertexToFaces[i])
 				{
 					if (_faces[faceIndex].nbIndexes >= 3)
 					{
@@ -200,9 +200,9 @@ BaseMesh& BaseMesh::invertFaces()
     return *this;
 }
 
-size_t BaseMesh::requestBufferSize(bool withNormal, bool withUv) const
+uint32_t BaseMesh::requestBufferSize(bool withNormal, bool withUv) const
 {
-	size_t res = nbVertices() * sizeof(vec3);
+	uint32_t res = nbVertices() * sizeof(vec3);
 	if(withNormal && !_normals.empty())
 		res += nbVertices() * sizeof(vec3);
 	if (withUv && !_normals.empty())
@@ -213,12 +213,12 @@ size_t BaseMesh::requestBufferSize(bool withNormal, bool withUv) const
 
 void BaseMesh::fillBuffer(void* ptr, bool withNormal, bool withUv) const
 {
-	size_t stride = sizeof(vec3) + ((withNormal && !_normals.empty()) ? sizeof(vec3) : 0) + ((withUv && !_texCoords.empty()) ? sizeof(vec2) : 0);
+	uint32_t stride = sizeof(vec3) + ((withNormal && !_normals.empty()) ? sizeof(vec3) : 0) + ((withUv && !_texCoords.empty()) ? sizeof(vec2) : 0);
 	byte* bptr = (byte*)ptr;
 
-	for (size_t i = 0; i < nbVertices(); ++i)
+	for (uint32_t i = 0; i < nbVertices(); ++i)
 	{
-		size_t offset = 0;
+		uint32_t offset = 0;
 		memcpy(bptr + offset, &_vertices[i], sizeof(vec3));
 		offset += sizeof(vec3);
 
@@ -242,7 +242,7 @@ namespace
 {
     struct HashVec3
     {
-        size_t operator()(const vec3& v) const
+        uint32_t operator()(const vec3& v) const
         { 
 			return v.hash<3>();
 		}
@@ -252,11 +252,11 @@ namespace
 void BaseMesh::buildVertexFaceMap(bool useRealPosition)
 {
     _vertexToFaces.clear();
-    _vertexToFaces.resize(_vertices.size(), std::vector<uint>());
+    _vertexToFaces.resize(_vertices.size(), std::vector<uint32_t>());
 
     if(!useRealPosition)
     {
-        for(size_t indexFace=0 ; indexFace < _faces.size() ; ++indexFace)
+        for(uint32_t indexFace=0 ; indexFace < _faces.size() ; ++indexFace)
         {
             for(int i=0 ; i<_faces[indexFace].nbIndexes ; ++i)
                 _vertexToFaces[_faces[indexFace].indexes[i]].push_back(indexFace);
@@ -264,24 +264,24 @@ void BaseMesh::buildVertexFaceMap(bool useRealPosition)
     }
     else
     {
-        std::unordered_map<vec3, vector<uint>, HashVec3> positionToVertex;
-        for(size_t i=0 ; i<_vertices.size() ; ++i)
+        std::unordered_map<vec3, vector<uint32_t>, HashVec3> positionToVertex;
+        for(uint32_t i=0 ; i<_vertices.size() ; ++i)
             positionToVertex[_vertices[i]].push_back(i);
 
-        for(size_t indexFace=0 ; indexFace < _faces.size() ; ++indexFace)
+        for(uint32_t indexFace=0 ; indexFace < _faces.size() ; ++indexFace)
         {
             for(int i=0 ; i<_faces[indexFace].nbIndexes ; ++i)
             {
                 auto cousin = positionToVertex[_vertices[_faces[indexFace].indexes[i]]];
 
-                for(uint v_id : cousin)
+                for(uint32_t v_id : cousin)
                     _vertexToFaces[v_id].push_back(indexFace);
             }
         }
     }
 }
 
-vec3 BaseMesh::faceNormal(uint faceIndex) const
+vec3 BaseMesh::faceNormal(uint32_t faceIndex) const
 {
     const Face& face = _faces[faceIndex];
     if(face.nbIndexes <= 2)
@@ -293,7 +293,7 @@ vec3 BaseMesh::faceNormal(uint faceIndex) const
     return v1.cross(v2).normalized();
 }
 
-std::ofstream& BaseMesh::writeVertex(std::ofstream& out, uint index) const
+std::ofstream& BaseMesh::writeVertex(std::ofstream& out, uint32_t index) const
 {
     ++index;
     if(_normals.empty() && _texCoords.empty())
@@ -319,17 +319,17 @@ void BaseMesh::generateGrid(BaseMesh& mesh, vec2 size, uivec2 resolution, const 
 	if(!heightmap.empty())
 		d_img = vec2(float(heightmap.size().x()) / (resolution.x() - 1), float(heightmap.size().y()) / (resolution.y() - 1));
 
-	std::vector<std::vector<uint>> indexes(resolution.x(), std::vector<uint>(resolution.y()));
-    uint curIndex = 0;
+	std::vector<std::vector<uint32_t>> indexes(resolution.x(), std::vector<uint32_t>(resolution.y()));
+    uint32_t curIndex = 0;
 	
-	for (uint i = 0; i < resolution.x(); ++i)
+	for (uint32_t i = 0; i < resolution.x(); ++i)
 	{
-		for (uint j = 0; j < resolution.y(); ++j)
+		for (uint32_t j = 0; j < resolution.y(); ++j)
 		{
 			vec3 p = vec3(d.x()*i, d.y()*j, 0) - vec3(size*0.5, 0);
 
 			if (!heightmap.empty())
-				p.z() = heightmap.getSmooth(d_img * vec2(i, j)) * Zscale;
+				p.z() = heightmap.getSmooth(d_img * vec2(float(i), float(j))) * Zscale;
 
 			mesh._vertices.push_back(p);
 			indexes[i][j] = curIndex++;
@@ -359,12 +359,12 @@ void BaseMesh::clearFaces()
     _faces.clear();
 }
 
-std::vector<uint> BaseMesh::indexData(uint nbPointsInFace) const
+std::vector<uint32_t> BaseMesh::indexData(uint32_t nbPointsInFace) const
 {
 	if (nbPointsInFace == 0)
 		nbPointsInFace = 3;
 
-	std::vector<uint> data;
+	std::vector<uint32_t> data;
 	data.reserve(_faces.size() * nbPointsInFace);
 
 	for (const auto& f : _faces)
@@ -384,11 +384,11 @@ void BaseMesh::computeJoinNormals(std::vector<BaseMesh*>& meshs, int smooth)
 
 	joined.computeNormals(true, smooth);
 
-	size_t counter = 0;
-	for (size_t i = 0; i < meshs.size(); ++i)
+	uint32_t counter = 0;
+	for (uint32_t i = 0; i < meshs.size(); ++i)
 	{
 		meshs[i]->_normals.resize(meshs[i]->nbVertices());
-		for (size_t j = 0; j < meshs[i]->nbVertices(); ++j)
+		for (uint32_t j = 0; j < meshs[i]->nbVertices(); ++j)
 			meshs[i]->_normals[j] = joined._normals[j + counter];
 
 		counter += meshs[i]->nbVertices();
@@ -397,7 +397,7 @@ void BaseMesh::computeJoinNormals(std::vector<BaseMesh*>& meshs, int smooth)
 
 Sphere BaseMesh::computeBoundingSphere()
 {
-	return Sphere::computeSphere(reinterpret_cast<float*>(_vertices.data()), _vertices.size(), 3);
+	return Sphere::computeSphere(reinterpret_cast<float*>(_vertices.data()), (uint32_t)_vertices.size(), 3);
 }
 
 /* Mesh */
@@ -408,7 +408,7 @@ Mesh& Mesh::constructLine(vec3 p1, vec3 p2)
 {
     _vertices.push_back(p1);
     _vertices.push_back(p2);
-    _faces.push_back({{_vertices.size()-2, _vertices.size()-1, 0, 0}, 2});
+    _faces.push_back({{ (uint32_t)_vertices.size() - 2, (uint32_t)_vertices.size() - 1, 0, 0 }, 2 });
     return *this;
 }
 
@@ -417,7 +417,7 @@ Mesh& Mesh::constructTriangle(vec3 p1, vec3 p2, vec3 p3)
     _vertices.push_back(p1);
     _vertices.push_back(p2);
     _vertices.push_back(p3);
-    _faces.push_back({{_vertices.size()-3, _vertices.size()-2, _vertices.size()-1, 0}, 3});
+    _faces.push_back({{ (uint32_t)_vertices.size() - 3, (uint32_t)_vertices.size() - 2, (uint32_t)_vertices.size() - 1, 0 }, 3});
     return *this;
 }
 
@@ -427,7 +427,7 @@ Mesh& Mesh::constructQuad(vec3 p1, vec3 p2, vec3 p3, vec3 p4)
     _vertices.push_back(p2);
     _vertices.push_back(p3);
     _vertices.push_back(p4);
-    _faces.push_back({{_vertices.size()-4, _vertices.size()-3, _vertices.size()-2, _vertices.size()-1}, 4});
+    _faces.push_back({{ (uint32_t)_vertices.size() - 4, (uint32_t)_vertices.size() - 3, (uint32_t)_vertices.size() - 2, (uint32_t)_vertices.size() - 1 }, 4 });
     return *this;
 }
 
@@ -450,7 +450,7 @@ UVMesh& UVMesh::constructLine(const Vertex& p1, const Vertex& p2)
     _texCoords.push_back(p1.uv);
     _texCoords.push_back(p2.uv);
 
-    _faces.push_back({{_vertices.size()-2, _vertices.size()-1, 0, 0}, 2});
+    _faces.push_back({{ (uint32_t)_vertices.size() - 2, (uint32_t)_vertices.size() - 1, 0, 0 }, 2 });
     return *this;
 }
 
@@ -464,7 +464,7 @@ UVMesh& UVMesh::constructTriangle(const Vertex& p1, const Vertex& p2, const Vert
     _texCoords.push_back(p2.uv);
     _texCoords.push_back(p3.uv);
 
-    _faces.push_back({{_vertices.size()-3, _vertices.size()-2, _vertices.size()-1, 0}, 3});
+    _faces.push_back({{ (uint32_t)_vertices.size() - 3, (uint32_t)_vertices.size()-2, (uint32_t)_vertices.size()-1, 0 }, 3 });
     return *this;
 }
 
@@ -480,7 +480,7 @@ UVMesh& UVMesh::constructQuad(const Vertex& p1, const Vertex& p2, const Vertex& 
     _texCoords.push_back(p3.uv);
     _texCoords.push_back(p4.uv);
 
-    _faces.push_back({{_vertices.size()-4, _vertices.size()-3, _vertices.size()-2, _vertices.size()-1}, 4});
+    _faces.push_back({{ (uint32_t)_vertices.size() - 4, (uint32_t)_vertices.size() - 3, (uint32_t)_vertices.size() - 2, (uint32_t)_vertices.size() - 1 }, 4 });
     return *this;
 }
 

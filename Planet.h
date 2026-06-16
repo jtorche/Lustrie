@@ -21,7 +21,7 @@ extern std::unique_ptr<tim::FractalNoise<tim::WorleyNoise<tim::vec3>>> g_fractal
 class Planet : NonCopyable
 {
 public:
-	static constexpr uint NB_SPLIT = 8;
+	static constexpr uint32_t NB_SPLIT = 8;
 
 	struct Parameter
 	{
@@ -45,7 +45,7 @@ public:
 		static Parameter generate(int seed);
 	};
 
-	Planet(tim::uint, const Parameter& param = Parameter(), int seed = 7);
+	Planet(uint32_t, const Parameter& param = Parameter(), int seed = 7);
 
     template<class Noise> void applyNoise(const Noise&, float factor, int side = Planet::NB_SIDE);
 
@@ -73,8 +73,8 @@ private:
     std::array<tim::BaseMesh, NB_SIDE> _planetSide;
 	std::array<tim::BaseMesh, NB_SIDE> _planetSideLowRes;
 
-    tim::uint _gridResolution;
-    std::vector<tim::uint> _gridIndex;
+    uint32_t _gridResolution;
+    std::vector<uint32_t> _gridIndex;
 
 	template <class T> using GridType = std::array<std::array<T, NB_SPLIT>, NB_SPLIT>;
 	GridType< std::array<BatchInstance, NB_LODS> > _grid;
@@ -86,12 +86,12 @@ private:
 	std::array< GridType<std::array<MeshBuffers, NB_LODS>>, NB_SIDE > _planetMesh;
 
 private:
-    tim::uint indexGrid(tim::uint,tim::uint) const;
-    tim::uint& indexGrid(tim::uint,tim::uint);
+    uint32_t indexGrid(uint32_t,uint32_t) const;
+    uint32_t& indexGrid(uint32_t,uint32_t);
 
-    void generateGrid(tim::uint);
-    void generateBatchIndex(tim::uint, bool);
-	void generateLowResGrid(tim::uint);
+    void generateGrid(uint32_t);
+    void generateBatchIndex(uint32_t, bool);
+	void generateLowResGrid(uint32_t);
 	void generateSideMeshBuffers(int side);
 
 	int distanceToLod(float) const;
@@ -166,10 +166,10 @@ private:
 inline const Planet::Parameter& Planet::parameter() const { return _parameter; }
 inline vec3 Planet::position() const { return _position; }
 
-inline tim::uint Planet::indexGrid(tim::uint i,tim::uint j) const
+inline uint32_t Planet::indexGrid(uint32_t i,uint32_t j) const
 { return _gridIndex[j +  i*_gridResolution]; }
 
-inline tim::uint& Planet::indexGrid(tim::uint i,tim::uint j)
+inline uint32_t& Planet::indexGrid(uint32_t i,uint32_t j)
 { return _gridIndex[j +  i*_gridResolution]; }
 
 template<class Noise> void Planet::applyNoise(const Noise& noise, float factor, int side)
@@ -186,7 +186,7 @@ template<class Noise> void Planet::applyNoise(const Noise& noise, float factor, 
 		}
 	}
 
-	for (size_t i=0  ; i<_planetSide.size() ; ++i)
+	for (uint32_t i=0  ; i<_planetSide.size() ; ++i)
 	{
 		if (side != i && side != Planet::NB_SIDE)
 			continue;

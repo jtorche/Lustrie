@@ -20,7 +20,7 @@ bool LustrieCore::init(tim::ivec2 resolution, bool fullscreen, HWND handle)
 
 	std::string shaderSrc = std::string(dx12::g_headerShader) + std::string(dx12::g_planetShader);
 	_planet.planetMaterial = std::make_unique<Material>(_graphics.createTexturedForwardMaterial(shaderSrc.c_str(), 
-		std::make_shared<TexturePool>(Graphics::SIZE_TEXTURE_POOL), true, false));
+												        std::make_shared<TexturePool>(Graphics::SIZE_TEXTURE_POOL), true, false));
 
 	auto grassMat = std::make_shared<Material>(_graphics.createPointToTriangleGSForwardMaterial(dx12::g_grassShader, _planet.planetMaterial->texturePool(), false, false));
 	_planet.grassMaterial.push_back(grassMat);
@@ -56,34 +56,30 @@ namespace
 
 void LustrieCore::update()
 {
-	Chrono timer;
-	//Sleep(10);
+	Timer timer;
 
 	if (_planet.planet == nullptr)
 	{
 		Planet::Parameter planetParam = Planet::Parameter::generate(rand());
-		/*planetParam.sizePlanet = { 60,30 };
+		planetParam.sizePlanet = { 60,30 };
 		planetParam.largeRidgeZScale = 0;
 		planetParam.largeWorleyZScale = 2;
 		planetParam.largeWorleyCoef = 1;
 		planetParam.simplexDetailZScale = 0.015;
-		planetParam.floorHeight = 0.7f;*/
+		planetParam.floorHeight = 0.7f;
 
 		_camera.position = vec3(0, 0, planetParam.sizePlanet.x()+planetParam.sizePlanet.y());
 		_planet.planet = std::unique_ptr<Planet>(new Planet(256, planetParam, rand()));
 
-#ifdef _DEBUG
-		for (int i = 0; i<1; ++i)
-#else
 		for(int i=0 ; i<4 ; ++i)
-#endif
 			_planet.grassOnPlanet.emplace_back(std::unique_ptr<PlanetGrass>(new PlanetGrass(*_planet.planet, i)));
 		
 		_planet.plants = std::make_unique<PlanetPlants>(rand());
-		_planet.plants->createTree(1, 5);
-		_planet.plants->createTree(1, 5);
-		for (int i = 0; i<10; ++i)
-			_planet.plants->populatePlant(*_planet.planet, i, 30);
+		_planet.plants->createTree(0, 10);
+		_planet.plants->createTree(1, 10);
+		_planet.plants->createTree(2, 10);
+		for (int i = 0; i<30; ++i)
+			_planet.plants->populatePlant(*_planet.planet, i, 100);
 	}
 
 	if (_event.key('Q').firstPress)

@@ -2,7 +2,7 @@
 #include "DX12PipelineState.h"
 #include "DX12Renderer.h"
 #include "DX12.h"
-#include <d3dx12.h>
+// #include <d3dx12.h>
 
 using Microsoft::WRL::ComPtr;
 
@@ -67,7 +67,28 @@ namespace dx12
 		desc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
 		desc.NodeMask = 0;
 		
-		desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		D3D12_BLEND_DESC blendDesc = {};
+		blendDesc.AlphaToCoverageEnable = FALSE;
+		blendDesc.IndependentBlendEnable = FALSE;
+
+		const D3D12_RENDER_TARGET_BLEND_DESC defaultRenderTargetBlendDesc = {
+			FALSE,                          // BlendEnable
+			FALSE,                          // LogicOpEnable
+			D3D12_BLEND_ONE,                // SrcBlend
+			D3D12_BLEND_ZERO,               // DestBlend
+			D3D12_BLEND_OP_ADD,             // BlendOp
+			D3D12_BLEND_ONE,                // SrcBlendAlpha
+			D3D12_BLEND_ZERO,               // DestBlendAlpha
+			D3D12_BLEND_OP_ADD,             // BlendOpAlpha
+			D3D12_LOGIC_OP_NOOP,            // LogicOp
+			D3D12_COLOR_WRITE_ENABLE_ALL    // RenderTargetWriteMask
+		};
+
+		for (UINT i = 0; i < 8; ++i) {
+			blendDesc.RenderTarget[i] = defaultRenderTargetBlendDesc;
+		}
+
+		desc.BlendState = blendDesc;
 		desc.SampleMask = UINT_MAX;
 
 		desc.NumRenderTargets = 1;

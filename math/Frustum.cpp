@@ -5,7 +5,7 @@
 namespace tim
 {
 
-void Frustum::buildCameraFrustum(const Camera& camera, size_t maskPlan)
+void Frustum::buildCameraFrustum(const Camera& camera, uint32_t maskPlan)
 {
     float tang = tanf(toRad(camera.fov)*0.5f) ;
     float nw = camera.clipDist.x() * tang;
@@ -49,7 +49,7 @@ void Frustum::buildCameraFrustum(const Camera& camera, size_t maskPlan)
 }
 
 void Frustum::buildCameraFrustum(const mat4& invProjView,
-                                 size_t maskPlan)
+                                 uint32_t maskPlan)
 {
     _plans.clear();
     vec3 ntl = vec3(invProjView*vec4(1,1,-1,1));
@@ -82,7 +82,7 @@ void Frustum::buildCameraFrustum(const mat4& invProjView,
 }
 
 void Frustum::buildOrthoFrustum(float l, float r, float b, float t, float n, float f,
-                                const mat4& view_matrix, size_t maskPlan)
+                                const mat4& view_matrix, uint32_t maskPlan)
 
 {
     _plans.clear();
@@ -107,7 +107,7 @@ void Frustum::buildOrthoFrustum(float l, float r, float b, float t, float n, flo
 }
 
 void Frustum::buildOrthoFrustum(float l, float r, float b, float t, float n, float f,
-                                const vec3& pos, const vec3& dir, const vec3& up, size_t maskPlan)
+                                const vec3& pos, const vec3& dir, const vec3& up, uint32_t maskPlan)
 {
     _plans.clear();
     vec3 Y = (dir-pos).normalized();
@@ -135,7 +135,7 @@ Frustum::Intersection Frustum::collide(const Sphere& s) const
     Intersection result = INSIDE;
 	float distance;
 
-	for(size_t i=0; i<_plans.size(); ++i)
+	for(uint32_t i=0; i<_plans.size(); ++i)
 	{
 		distance = _plans[i].distance(s.center());
 
@@ -151,7 +151,7 @@ Frustum::Intersection Frustum::collide(const Sphere& s) const
 Frustum::Intersection Frustum::collide(const Box& b) const
 {
     Intersection result = INSIDE;
-    for(uint i=0; i < _plans.size(); ++i)
+    for(uint32_t i=0; i < _plans.size(); ++i)
     {
 		if(_plans[i].distance(getBoxVertexP(b, _plans[i].plan().down<1>())) < 0)
 			return OUTSIDE;
@@ -164,7 +164,7 @@ Frustum::Intersection Frustum::collide(const Box& b) const
 
 bool Frustum::collide(const vec3& p) const
 {
-    for(uint i=0; i < _plans.size(); ++i)
+    for(uint32_t i=0; i < _plans.size(); ++i)
     {
 		if(_plans[i].distance(p) < 0)
 			return false;
@@ -175,7 +175,7 @@ bool Frustum::collide(const vec3& p) const
 vec3 Frustum::getBoxVertexP(const Box& b, const vec3& n) const
 {
     vec3 result;
-    for(size_t i=0 ; i<3 ; ++i)
+    for(uint32_t i=0 ; i<3 ; ++i)
     {
         if (n[i] > 0) result.set(b.box()[i][1], i);
         else result.set(b.box()[i][0], i);
@@ -187,7 +187,7 @@ vec3 Frustum::getBoxVertexP(const Box& b, const vec3& n) const
 vec3 Frustum::getBoxVertexN(const Box& b, const vec3& n) const
 {
     vec3 result;
-    for(size_t i=0 ; i<3 ; ++i)
+    for(uint32_t i=0 ; i<3 ; ++i)
     {
         if (n[i] < 0) result.set(b.box()[i][1], i);
         else result.set(b.box()[i][0], i);

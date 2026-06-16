@@ -14,7 +14,7 @@ tim::vec3 Planet::computeUp(tim::vec3 pos)
 	return pos.normalized();
 }
 
-Planet::Planet(uint resolution, const Parameter& param, int seedIn) : _parameter(param), _noise(seedIn, param)
+Planet::Planet(uint32_t resolution, const Parameter& param, int seedIn) : _parameter(param), _noise(seedIn, param)
 {
 	g_threadPool.push([=](int thread_id) {
 		this->generateLowResGrid(resolution / 8);
@@ -110,9 +110,9 @@ void Planet::cull(const tim::Camera& camera, std::vector<ObjectInstance>& visibl
 		}
 		else
 		{
-			for (uint i = 0; i < _grid.size(); ++i)
+			for (uint32_t i = 0; i < _grid.size(); ++i)
 			{
-				for (uint j = 0; j < _grid[0].size(); ++j)
+				for (uint32_t j = 0; j < _grid[0].size(); ++j)
 				{
 					vec3 center = _planetSide[side].position(_grid[i][j][0][0].indexes[0]) +
 						       	  _planetSide[side].position(_grid[i][j][0].back().indexes[0]) * 0.5;
@@ -132,7 +132,7 @@ int Planet::distanceToLod(float dist) const
 {
 	const float coef = (_parameter.sizePlanet.x() / 50);
 	const float baseDist = 80 * coef;
-	for (uint i = 0; i < NB_LODS; ++i)
+	for (uint32_t i = 0; i < NB_LODS; ++i)
 	{
 		if (baseDist + i*40*coef > dist)
 			return i;
@@ -141,7 +141,7 @@ int Planet::distanceToLod(float dist) const
 	return NB_LODS -1;
 }
 
-void Planet::generateGrid(uint res)
+void Planet::generateGrid(uint32_t res)
 {
     _gridIndex.resize((res+1)*(res+1));
     _gridResolution = res+1;
@@ -149,10 +149,10 @@ void Planet::generateGrid(uint res)
 
     float d = { 1.f / res };
 
-    uint curIndex = 0;
-    for (uint i = 0; i < res+1; ++i)
+    uint32_t curIndex = 0;
+    for (uint32_t i = 0; i < res+1; ++i)
     {
-        for (uint j = 0; j < res+1; ++j)
+        for (uint32_t j = 0; j < res+1; ++j)
         {
             vec3 p = vec3(d*i, d*j, 0) - vec3(0.5, 0.5, 0);
             vec2 uv(float(i) / res, float(j) / res);
@@ -179,29 +179,29 @@ void Planet::generateGrid(uint res)
     generateBatchIndex(res, true);
 }
 
-void Planet::generateBatchIndex(tim::uint res, bool triangulate)
+void Planet::generateBatchIndex(uint32_t res, bool triangulate)
 {
     for(auto& l : _grid)
         for(auto& r : l)
             for(auto& lod : r)
                 lod.clear();
 
-    for(uint i=0 ; i<_grid.size() ; ++i)
+    for(uint32_t i=0 ; i<_grid.size() ; ++i)
     {
-        for(uint j=0 ; j<_grid.size() ; ++j)
+        for(uint32_t j=0 ; j<_grid.size() ; ++j)
         {
-            for(uint lod = 0 ; lod < _grid[i][j].size() ; ++lod)
+            for(uint32_t lod = 0 ; lod < (uint32_t)_grid[i][j].size(); ++lod)
             {
-                uint batchRes = res / _grid.size();
-                uint stride = 1 << lod;
+                uint32_t batchRes = res / (uint32_t)_grid.size();
+                uint32_t stride = 1 << lod;
 
-                for (uint x = 0; x < batchRes+1; x += stride)
+                for (uint32_t x = 0; x < batchRes+1; x += stride)
                 {
-                    for (uint y = 0; y < batchRes+1; y += stride)
+                    for (uint32_t y = 0; y < batchRes+1; y += stride)
                     {
-                        uint ox = i*batchRes;
-                        uint oy = j*batchRes;
-                        uint xx=x+ox, yy=y+oy;
+                        uint32_t ox = i*batchRes;
+                        uint32_t oy = j*batchRes;
+                        uint32_t xx=x+ox, yy=y+oy;
 
                         if (x > 0 && y > 0)
                         {
@@ -220,7 +220,7 @@ void Planet::generateBatchIndex(tim::uint res, bool triangulate)
     }
 }
 
-void Planet::generateLowResGrid(tim::uint res)
+void Planet::generateLowResGrid(uint32_t res)
 {
 	UVMesh plan = UVMesh::generateGrid(vec2(1, 1), { res, res }, ImageAlgorithm<float>(), 0, true);
 	plan.invertFaces();
@@ -241,9 +241,9 @@ tim::UVMesh Planet::generateMesh(vec3 pos) const
     for(int side=0 ; side<NB_SIDE ; ++side)
     {
         UVMesh sideMesh = _planetSide[side];
-        for(uint i=0 ; i<_grid.size() ; ++i)
+        for(uint32_t i=0 ; i<_grid.size() ; ++i)
         {
-            for(uint j=0 ; j<_grid.size() ; ++j)
+            for(uint32_t j=0 ; j<_grid.size() ; ++j)
             {
                 //int index = int( (_grid[i][j].sphere.center() - vec3(0,0,1)).length() * 4 + 0.5);
                 for(auto f : _grid[i][j][0])
@@ -259,7 +259,7 @@ tim::UVMesh Planet::generateMesh(vec3 pos) const
 
 void Planet::generateSideMeshBuffers(int side)
 {
-	uint indexOffsetlod[NB_LODS] = { 0 };
+	uint32_t indexOffsetlod[NB_LODS] = { 0 };
 	GridType < std::shared_ptr<dx12::GpuBuffer> > indexBufferAllLods;
 
 	uint64_t fences[2] = { 0 };
@@ -267,31 +267,31 @@ void Planet::generateSideMeshBuffers(int side)
 	_planetSide[side].computeNormals(false, 16);
 	std::shared_ptr<dx12::GpuBuffer> vb = MeshBuffers::createVertexBufferFromMesh(_planetSide[side], &fences[0]);
 
-	uint nbIndexConcat = 0;
-	for (uint i = 0; i < NB_LODS; ++i)
+	uint32_t nbIndexConcat = 0;
+	for (uint32_t i = 0; i < NB_LODS; ++i)
 	{
 		indexOffsetlod[i] = nbIndexConcat;
-		nbIndexConcat += _grid[0][0][i].size() * 3;
+		nbIndexConcat += (uint32_t)_grid[0][0][i].size() * 3;
 	}
 
 	auto& commandContext = dx12::CommandContext::AllocContext(dx12::CommandQueue::COPY);
 
-	for (uint i = 0; i < _grid.size(); ++i)
+	for (uint32_t i = 0; i < _grid.size(); ++i)
 	{
-		for (uint j = 0; j < _grid[0].size(); ++j)
+		for (uint32_t j = 0; j < _grid[0].size(); ++j)
 		{
-			dx12::GpuBuffer* ib = new dx12::GpuBuffer(nbIndexConcat, sizeof(tim::uint));
-			for (uint lod = 0; lod < NB_LODS; lod++)
+			dx12::GpuBuffer* ib = new dx12::GpuBuffer(nbIndexConcat, sizeof(uint32_t));
+			for (uint32_t lod = 0; lod < NB_LODS; lod++)
 			{
 				BaseMesh tmp;
 				for (auto f : _grid[i][j][lod])
 					tmp.addFace(f);
 
-				commandContext.initBuffer(*ib, tmp.indexData().data(), tmp.nbFaces() * 3 * sizeof(uint), indexOffsetlod[lod] * sizeof(uint));
+				commandContext.initBuffer(*ib, tmp.indexData().data(), tmp.nbFaces() * 3 * sizeof(uint32_t), indexOffsetlod[lod] * sizeof(uint32_t));
 			}
 
 			indexBufferAllLods[i][j] = std::shared_ptr<dx12::GpuBuffer>(ib);
-			for (uint lod = 0; lod < NB_LODS; ++lod)
+			for (uint32_t lod = 0; lod < NB_LODS; ++lod)
 				_planetMesh[side][i][j][lod] = MeshBuffers(vb, indexBufferAllLods[i][j], indexOffsetlod[lod], _grid[i][j][lod].size() * 3);
 		}
 	}

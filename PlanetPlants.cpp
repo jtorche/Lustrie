@@ -67,7 +67,7 @@ void PlanetPlants::createTree(int sizeCategorie, int nb)
 		genLeafParam.orientation = LTree::GaussPDF({ -0.6f,0.6f });
 		genLeafParam.tilt = LTree::GaussPDF({ 0.0f,0.3f });
 		genLeafParam.scale = LTree::GaussPDF({ 0.75f,1.5f });
-		genLeafParam.density = sizeCategorie == 1 ? 6:2;
+		genLeafParam.density = (sizeCategorie == 1) ? 6.f:2.f;
 		genLeafParam.depth = 2;
 
 		MeshBuffers treeBuffer = MeshBuffers::createFromMesh(tree);
@@ -82,7 +82,7 @@ void PlanetPlants::createTree(int sizeCategorie, int nb)
 	}
 }
 
-void PlanetPlants::populatePlant(Planet& planet, size_t plantIndex, int nbPlants)
+void PlanetPlants::populatePlant(Planet& planet, uint32_t plantIndex, int nbPlants)
 {
 	_ASSERT(plantIndex < _plants.size());
 

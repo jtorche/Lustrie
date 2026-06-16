@@ -14,7 +14,7 @@ namespace tim
     {
     public:
         using Point = T;
-        WorleyNoise(uint nbPoints, int nth = 1, int seed = 42);
+        WorleyNoise(uint32_t nbPoints, int nth = 1, int seed = 42);
 
         WorleyNoise(const WorleyNoise&) = delete;
         WorleyNoise& operator=(const WorleyNoise&) = delete;
@@ -32,25 +32,25 @@ namespace tim
         struct Node
         {
             Node *left, *right;
-            std::vector<uint> container;
+            std::vector<uint32_t> container;
         };
 
         std::deque<Node> _nodePool;
         Node* _root = nullptr;
 
-        void optimiseSpace(Node*, Point, float, uint depth, uint maxDepth);
-        float search(Point, Node*, Point, float, uint depth) const;
+        void optimiseSpace(Node*, Point, float, uint32_t depth, uint32_t maxDepth);
+        float search(Point, Node*, Point, float, uint32_t depth) const;
     };
 
     template<class T>
     struct WorleyNoiseInstancer
     {
-        uint _nbPoints, _layerCoef;
+        uint32_t _nbPoints, _layerCoef;
         int _nth, _seed;
 
-        WorleyNoiseInstancer(uint nbPoints, uint layerCoef = 3, uint nth = 1, int seed = 42) : _nbPoints(nbPoints), _layerCoef(layerCoef), _nth(nth), _seed(seed) {}
+        WorleyNoiseInstancer(uint32_t nbPoints, uint32_t layerCoef = 3, uint32_t nth = 1, int seed = 42) : _nbPoints(nbPoints), _layerCoef(layerCoef), _nth(nth), _seed(seed) {}
 
-        T operator()(uint layer) const
+        T operator()(uint32_t layer) const
         {
             return T(_nbPoints * uipow(_layerCoef, layer), _nth, _seed+layer);
         }
@@ -62,15 +62,15 @@ namespace tim
 
     /** Worley Noise **/
 
-    template<class T> WorleyNoise<T>::WorleyNoise(uint nbPoints, int nth, int seed) : _nth(nth), _nodePool{}, _root{&_nodePool.emplace_back()}
+    template<class T> WorleyNoise<T>::WorleyNoise(uint32_t nbPoints, int nth, int seed) : _nth(nth), _nodePool{}, _root{&_nodePool.emplace_back()}
     {
         std::mt19937 randEngine(seed);
         std::uniform_real_distribution<float> random(0,1);
 
-        for(uint i=0 ; i<nbPoints ; ++i)
+        for(uint32_t i=0 ; i<nbPoints ; ++i)
         {
             T v;
-            for(uint j=0 ; j<T::Length ; ++j)
+            for(uint32_t j=0 ; j<T::Length ; ++j)
                 v[j] = random(randEngine);
             _points.push_back(v);
         }
@@ -92,7 +92,7 @@ namespace tim
         {
             int nth = _nth>0 ? _nth:1;
             std::vector<float> dists(_points.size());
-            for(size_t i=0 ; i<_points.size() ; ++i)
+            for(uint32_t i=0 ; i<_points.size() ; ++i)
                 dists[i] = (_points[i] - x).length2();
 
             std::partial_sort(dists.begin(), dists.begin()+nth, dists.end());
@@ -110,7 +110,7 @@ namespace tim
         template<class T> bool isIn(T p, T center, float size)
         {
             p -= center;
-            for(uint i=0 ; i<T::Length ; ++i)
+            for(uint32_t i=0 ; i<T::Length ; ++i)
             {
                 if(fabsf(p[i]) > size)
                     return false;
@@ -119,11 +119,11 @@ namespace tim
         }
     }
 
-    template<class T> void WorleyNoise<T>::optimiseSpace(Node* node, Point center, float size, uint depth, uint maxDepth)
+    template<class T> void WorleyNoise<T>::optimiseSpace(Node* node, Point center, float size, uint32_t depth, uint32_t maxDepth)
     {
         if(depth % Point::Length==0)
         {
-            for(uint i=0 ; i<_points.size() ; ++i)
+            for(uint32_t i=0 ; i<_points.size() ; ++i)
             {
                 if(isIn(_points[i], center, size*2))
                     node->container.push_back(i);
@@ -153,7 +153,7 @@ namespace tim
         }
     }
 
-    template<class T> float WorleyNoise<T>::search(Point p, Node* node, Point center, float size, uint depth) const
+    template<class T> float WorleyNoise<T>::search(Point p, Node* node, Point center, float size, uint32_t depth) const
     {
         int state = depth % Point::Length;
         Node* next_node = nullptr;
@@ -182,9 +182,9 @@ namespace tim
                 int nth = _nth>0 ? _nth:1;
                 std::vector<float> dists;
 
-                for(size_t i=0 ; i<node->container.size() ; ++i)
+                for(uint32_t i=0 ; i<node->container.size() ; ++i)
                 {
-                    //uint gg = node->container[i];
+                    //uint32_t gg = node->container[i];
                     float dist = (_points[ node->container[i] ] - p).length2();
 
                     if(dist < size*size)

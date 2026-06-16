@@ -11,7 +11,7 @@ namespace tim
     class FractalNoise
     {
     public:
-        FractalNoise(int numLayer, std::function<Noise(uint)> instancer)
+        FractalNoise(int numLayer, std::function<Noise(uint32_t)> instancer)
         {
             for(int i=0 ; i<numLayer ; ++i)
                 _layers.push_back(instancer(i));
@@ -23,7 +23,7 @@ namespace tim
         {
             float res=0;
             float coef = 0.5f;
-            for(size_t i=0 ; i<_layers.size() ; ++i)
+            for(uint32_t i=0 ; i<_layers.size() ; ++i)
             {
                 float val = fun ? fun(_layers[i].noise(v)) : _layers[i].noise(v);
                 res += val * coef;
@@ -38,9 +38,9 @@ namespace tim
             ImageAlgorithm<float> img(res);
             vec2 delta = vec2(1.f / (res.x()-1),1.f / (res.y()-1));
 
-            for(uint i=0 ; i<res.x() ; ++i)
-                for(uint j=0 ; j<res.y() ; ++j)
-                    img.set(i,j, noise(delta * vec2(i,j), fun));
+            for(uint32_t i=0 ; i<res.x() ; ++i)
+                for(uint32_t j=0 ; j<res.y() ; ++j)
+                    img.set(i,j, noise(delta * vec2(float(i), float(j)), fun));
 
             return img;
         }

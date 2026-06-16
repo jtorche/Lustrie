@@ -20,7 +20,7 @@ namespace tim
         Plan(const vec4& equ)
         { setPlan(equ); }
 
-        template <size_t N>
+        template <uint32_t N>
         float findComponent(const vec3&) const;
 
         const vec4& plan() const { return _plan; }
@@ -73,11 +73,11 @@ namespace tim
 
     };
 
-    template <size_t N>
+    template <uint32_t N>
     float Plan::findComponent(const vec3& v) const
     {
         float res = -_plan[3];
-        for(uint i=0 ; i<3 ; ++i)
+        for(uint32_t i=0 ; i<3 ; ++i)
         {
             if(i != N)
                 res -= _plan[i]*v[i];

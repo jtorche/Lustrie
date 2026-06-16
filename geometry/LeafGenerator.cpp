@@ -14,13 +14,13 @@ void LeafGenerator::generate(const Parameter& param)
 
     SampleFunction fun = leafFunction(param.leafType);
 
-    uint resY = param.smoothAlongY ? 3:2;
-    std::vector<uint> startLine(resY);
+    uint32_t resY = param.smoothAlongY ? 3:2;
+    std::vector<uint32_t> startLine(resY);
 
-    for(uint y=0 ; y<resY ; ++y)
+    for(uint32_t y=0 ; y<resY ; ++y)
     {
         startLine[y] = _mesh.nbVertices();
-        for(uint x=0 ; x<param.resX ; ++x)
+        for(uint32_t x=0 ; x<param.resX ; ++x)
         {
             float xcoord = float(x) / (param.resX-1);
             float funEval = 0.5f*fun(xcoord);
@@ -46,7 +46,7 @@ void LeafGenerator::generate(const Parameter& param)
     }
 
     const int indexLastTopV = param.resX-3;
-    for(uint i=0 ; i<param.resX-1 ; ++i)
+    for(uint32_t i=0 ; i<param.resX-1 ; ++i)
     {
         if(i == 0)
         {

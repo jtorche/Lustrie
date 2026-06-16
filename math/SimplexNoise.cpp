@@ -39,7 +39,7 @@ float SimplexNoise2D::noise(vec2 v) const
      // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
      // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
      // c = (3-sqrt(3))/6
-     V[1] = V[0] - vec2(i1, j1) + vec2(G2, G2);
+     V[1] = V[0] - vec2(float(i1), float(j1)) + vec2(G2, G2);
      V[2] = V[0] - vec2(1,1) + vec2(2.f*G2, 2.f*G2);
 
      // Work out the hashed gradient indices of the three simplex corners
@@ -265,9 +265,9 @@ ImageAlgorithm<float> SimplexNoise2D::generate(uivec2 res) const
     ImageAlgorithm<float> img(res);
     vec2 delta = vec2(1.f / res.x(),1.f / res.y());
 
-    for(uint i=0 ; i<res.x() ; ++i)
-        for(uint j=0 ; j<res.y() ; ++j)
-            img.set(i,j, noise(delta * vec2(i,j)));
+    for(uint32_t i=0 ; i<res.x() ; ++i)
+        for(uint32_t j=0 ; j<res.y() ; ++j)
+            img.set(i,j, noise(delta * vec2(float(i),float(j))));
 
     return img;
 }

@@ -17,7 +17,7 @@ namespace tim
     inline float toDeg(float rad) { return rad*180.f/PI; }
 	
     template<typename T>
-    inline T uipow(T x, uint p) { T r(1); for(uint i=0 ; i<p ; i++)r*=x; return r; }
+    inline T uipow(T x, uint32_t p) { T r(1); for(uint32_t i=0 ; i<p ; i++)r*=x; return r; }
 
     inline float zero(float x) { if(fcompare(x,0,1e-16f)) return 0.f; else return x; }
 

@@ -32,15 +32,15 @@ namespace dx12
 		uint64_t finish(bool wait);
 
 		void copyBuffer(Resource& dest, Resource& src);
-		void copySubBuffer(Resource& dest, size_t destOffset, Resource& src, size_t srcOffset, size_t numBytes);
+		void copySubBuffer(Resource& dest, uint32_t destOffset, Resource& src, uint32_t srcOffset, uint32_t numBytes);
 
 		void copyBuffer(Resource& dest, CpuWritableBuffer& src);
-		void copySubBuffer(Resource& dest, size_t destOffset, CpuWritableBuffer& src, size_t srcOffset, size_t numBytes);
+		void copySubBuffer(Resource& dest, uint32_t destOffset, CpuWritableBuffer& src, uint32_t srcOffset, uint32_t numBytes);
 
-		void initBuffer(Resource& dest, const void* data, size_t numBytes, size_t offset = 0);
+		void initBuffer(Resource& dest, const void* data, uint32_t numBytes, uint32_t offset = 0);
 		void initTexture(Texture& dest, const std::vector<D3D12_SUBRESOURCE_DATA>&);
 
-		DynAlloc allocWritableBuffer(size_t bytes);
+		DynAlloc allocWritableBuffer(uint32_t bytes);
 
 		void resourceBarrier(Resource&, D3D12_RESOURCE_STATES, bool immediate = false);
 		void flushResourceBarriers();

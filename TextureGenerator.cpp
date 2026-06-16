@@ -11,9 +11,9 @@ namespace
 	bvec4 toColb(const vec4& col) { return { (byte)(col[0]*255.f + 0.5f), (byte)(col[1] *255.f + 0.5f), (byte)(col[2] *255.f + 0.5f), (byte)(col[3] * 255.f + 0.5f) }; }
 };
 
-ImageAlgorithm<bvec4> TextureGenerator::genGroundTexture(uint res, const Palette& palette)
+ImageAlgorithm<bvec4> TextureGenerator::genGroundTexture(uint32_t res, const Palette& palette)
 {
-	auto bmpconvert = [](float x) { return bvec3(x * 255, x * 255, x * 255); };
+	auto bmpconvert = [](float x) { return bvec3(byte(x * 255), byte(x * 255), byte(x * 255)); };
 	auto ridge = [](float x) { return fabsf((x - 0.5f) * 2); };
 
 	if (_randEngine() % 2 == 0)
@@ -32,11 +32,11 @@ ImageAlgorithm<bvec4> TextureGenerator::genGroundTexture(uint res, const Palette
 	}
 }
 
-tim::ImageAlgorithm<tim::bvec4> TextureGenerator::genGrassTexture(tim::uint res, const Palette& palette)
+tim::ImageAlgorithm<tim::bvec4> TextureGenerator::genGrassTexture(uint32_t res, const Palette& palette)
 {
 	FractalNoise<SimplexNoise2D> noise(4, SimplexNoiseInstancer<SimplexNoise2D>(4, 2, _seed += 439354));
 	tim::ImageAlgorithm<float> baseImg = noise.generate(res);
-	for (uint i = 0; i < baseImg.size().x(); ++i) for (uint j = 0; j < baseImg.size().y(); ++j)
+	for (uint32_t i = 0; i < baseImg.size().x(); ++i) for (uint32_t j = 0; j < baseImg.size().y(); ++j)
 	{
 		baseImg.set(i, j, baseImg.get(0, j));
 	}
@@ -44,33 +44,33 @@ tim::ImageAlgorithm<tim::bvec4> TextureGenerator::genGrassTexture(tim::uint res,
 	return baseImg.map(palette);
 }
 
-tim::ImageAlgorithm<tim::bvec4> TextureGenerator::genTreeBarkTexture(tim::uint res, const tim::Palette& palette)
+tim::ImageAlgorithm<tim::bvec4> TextureGenerator::genTreeBarkTexture(uint32_t res, const tim::Palette& palette)
 {
 	FractalNoise<SimplexNoise2D> noise(5, SimplexNoiseInstancer<SimplexNoise2D>(4, 2, _seed += 4354));
 
 	float nbSeuil = 6.f;
-	auto bmpconvert = [](float x) { return bvec3(x * 255, x * 255, x * 255); };
+	auto bmpconvert = [](float x) { return bvec3(byte(x * 255), byte(x * 255), byte(x * 255)); };
 	auto seuil = [=](float x) { return (int(x*nbSeuil)%3>0) ? float(int(x*nbSeuil)) / (nbSeuil-1) : x; };
 
 	return noise.generate({ res, res }).map(seuil).map(palette);
 }
 
-tim::ImageAlgorithm<tim::bvec4> TextureGenerator::genLeafTexture(tim::uint res, const tim::Palette& palette)
+tim::ImageAlgorithm<tim::bvec4> TextureGenerator::genLeafTexture(uint32_t res, const tim::Palette& palette)
 {
 	int index = _randEngine() % 2;
 	return g_fractalWorley[index][_randEngine() % g_fractalWorley[index].size()]->generate({ res,res }).map(palette);
 }
 
-Palette TextureGenerator::randPalette(uivec2 nbColorRange, uint satFrom)
+Palette TextureGenerator::randPalette(uivec2 nbColorRange, uint32_t satFrom)
 {
-	std::uniform_int_distribution<uint> randInt(nbColorRange.x(), nbColorRange.y());
+	std::uniform_int_distribution<uint32_t> randInt((uint32_t)nbColorRange.x(), (uint32_t)nbColorRange.y());
 	Palette palette;
-	uint nbColor = randInt(_randEngine);
+	uint32_t nbColor = randInt(_randEngine);
 
 	if (nbColor == 0)
 		nbColor++;
 
-	for (uint i = 0; i < nbColor; ++i)
+	for (uint32_t i = 0; i < nbColor; ++i)
 	{
 		vec4 col = randColorf();
 		if (i >= satFrom) col.saturate();
@@ -113,7 +113,7 @@ void TextureGenerator::genWorleyNoise()
 		fut.wait();
 }
 
-std::vector<tim::ImageAlgorithm<tim::bvec4>> TextureGenerator::generateMips(const ImageAlgorithm<bvec4>& img, uint nbMips)
+std::vector<tim::ImageAlgorithm<tim::bvec4>> TextureGenerator::generateMips(const ImageAlgorithm<bvec4>& img, uint32_t nbMips)
 {
 	if(nbMips == 0)
 		nbMips = log2_ui(img.size().x()) - 1;
@@ -122,7 +122,7 @@ std::vector<tim::ImageAlgorithm<tim::bvec4>> TextureGenerator::generateMips(cons
 
 	auto fimg = img.map([](bvec4 color) { return vec4(color[0], color[1], color[2], color[3]); });
 
-	for (uint i = 0; i < nbMips; ++i)
+	for (uint32_t i = 0; i < nbMips; ++i)
 	{
 		fimg = fimg.resized(fimg.size() / 2);
 		result.push_back(fimg.map([](vec4 color){ return bvec4(byte(color[0]), byte(color[1]), byte(color[2]), byte(color[3])); }));
@@ -156,22 +156,22 @@ vec4 TextureGenerator::getColorFromBank(ColorBank col)
 		BANK = { vec3(255, 163, 253) / 255.f, vec3(255, 43, 152) / 255.f, vec3(255, 30, 80) / 255.f, vec3(255, 5, 45) / 255.f }; break;
 	}
 
-	size_t index1 = std::min(size_t(BANK.size() * select.x()), BANK.size() - 1);
-	size_t index2 = std::min(size_t(BANK.size() * select.y()), BANK.size() - 1);
+	uint32_t index1 = std::min<uint32_t>(uint32_t(BANK.size() * select.x()), (uint32_t)BANK.size() - 1);
+	uint32_t index2 = std::min<uint32_t>(uint32_t(BANK.size() * select.y()), (uint32_t)BANK.size() - 1);
 
 	return vec4(interpolate(BANK[index1], BANK[index2], select.z()), 1);
 }
 
 Palette TextureGenerator::genPalette(const std::vector<ColorBank>& choices, uivec2 nbColorsRange)
 {
-	std::uniform_int_distribution<uint> randInt(nbColorsRange.x(), nbColorsRange.y());
+	std::uniform_int_distribution<uint32_t> randInt(nbColorsRange.x(), nbColorsRange.y());
 	Palette palette;
-	uint nbColor = randInt(_randEngine);
+	uint32_t nbColor = randInt(_randEngine);
 
 	if (nbColor == 0)
 		nbColor++;
 
-	for (uint i = 0; i < nbColor; ++i)
+	for (uint32_t i = 0; i < nbColor; ++i)
 	{
 		vec4 col = getColorFromBank(choices[_randEngine() % choices.size()]);// * (0.4f + 0.6f * (1.f-powf(_random(_randEngine), 2.f)));
 		if(_randEngine()%2 == 0)

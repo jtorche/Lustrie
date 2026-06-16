@@ -5,21 +5,21 @@
 
 namespace tim
 {
-    template <class T, size_t N>
+    template <class T, uint32_t N>
     class Matrix
     {
     public:
 
-        Matrix() { for(size_t i=0;i<N*N;++i)_val[i]=0; }
-        Matrix(const Matrix& m) { for(size_t i=0;i<N*N;++i)_val[i]=m._val[i]; }
+        Matrix() { for(uint32_t i=0;i<N*N;++i)_val[i]=0; }
+        Matrix(const Matrix& m) { for(uint32_t i=0;i<N*N;++i)_val[i]=m._val[i]; }
 
-        Matrix(const T data[N*N]) { for(size_t i=0;i<N*N;++i)_val[i]=data[i]; }
+        Matrix(const T data[N*N]) { for(uint32_t i=0;i<N*N;++i)_val[i]=data[i]; }
 
         /*Matrix(std::initializer_list<T> l) : Matrix()
         {
             if(l.size() > N*N) return;
             auto it=l.begin();
-            for(size_t i=0;it!=l.end();++i)
+            for(uint32_t i=0;it!=l.end();++i)
             {
                 _val[i]=*it;
                 it++;
@@ -30,26 +30,26 @@ namespace tim
         {
             if(col.size() > N) return;
             auto it=col.begin();
-            for(size_t i=0;it!=col.end();++i)
+            for(uint32_t i=0;it!=col.end();++i)
             {
                 _mat[i]=*it;
                 it++;
             }
         }
 
-        Matrix& operator=(const Matrix& m) { for(size_t i=0;i<N*N;++i)_val[i]=m.get(i); return *this; }
-        bool operator==(const Matrix& m) { for(size_t i=0;i<N*N;++i){if(_val[i]!=m.get(i)) return false;} return true; }
+        Matrix& operator=(const Matrix& m) { for(uint32_t i=0;i<N*N;++i)_val[i]=m.get(i); return *this; }
+        bool operator==(const Matrix& m) { for(uint32_t i=0;i<N*N;++i){if(_val[i]!=m.get(i)) return false;} return true; }
         bool operator!=(const Matrix& m) { return !(*this==m); }
 
-        Matrix operator+(const Matrix& m) { Matrix res; for(size_t i=0;i<N*N;++i)res.get(i)=_val[i]+m.get(i); return res; }
-        Matrix operator-(const Matrix& m) { Matrix res; for(size_t i=0;i<N*N;++i)res.get(i)=_val[i]-m.get(i); return res; }
+        Matrix operator+(const Matrix& m) { Matrix res; for(uint32_t i=0;i<N*N;++i)res.get(i)=_val[i]+m.get(i); return res; }
+        Matrix operator-(const Matrix& m) { Matrix res; for(uint32_t i=0;i<N*N;++i)res.get(i)=_val[i]-m.get(i); return res; }
 
         Matrix operator*(const Matrix& m) const
         {
             Matrix res;
-            for(size_t i=0 ; i<N ; ++i)
-                for(size_t j=0 ; j<N ; ++j)
-                    for(size_t k=0 ; k<N ; ++k)
+            for(uint32_t i=0 ; i<N ; ++i)
+                for(uint32_t j=0 ; j<N ; ++j)
+                    for(uint32_t k=0 ; k<N ; ++k)
             {
                 res.get(i*N+j)+=_val[i*N+k]*m.get(k*N+j);
             }
@@ -59,39 +59,39 @@ namespace tim
         Vector<T,N> operator*(const Vector<T,N>& v) const
         {
             Vector<T,N> res;
-            for(size_t i=0 ; i<N ; ++i)
+            for(uint32_t i=0 ; i<N ; ++i)
                 res[i]=(*this)[i].dot(v);
             return res;
         }
 
-        template<size_t A>
+        template<uint32_t A>
         Vector<T,A> operator*(const Vector<T,A>& v) const
         {
             static_assert(A<N, "Vector size must be less or equal than matrix dimension");
             Vector<T,A> res;
-            for(size_t i=0 ; i<A ; ++i)
+            for(uint32_t i=0 ; i<A ; ++i)
             {
-                for(size_t j=0 ; j<A ; ++j)
+                for(uint32_t j=0 ; j<A ; ++j)
                     res[i]+=(*this)[i][j]*v[j];
             }
-            for(size_t i=0 ; i<A ; ++i)
+            for(uint32_t i=0 ; i<A ; ++i)
             {
-                for(size_t j=A ; j<N ; ++j)
+                for(uint32_t j=A ; j<N ; ++j)
                     res[i]+=(*this)[i][j];
             }
             return res;
         }
 
-        Matrix& operator+=(const Matrix& m) { for(size_t i=0;i<N*N;++i)_val[i]+=m.get(i); return *this; }
-        Matrix& operator-=(const Matrix& m) { for(size_t i=0;i<N*N;++i)_val[i]-=m.get(i); return *this; }
+        Matrix& operator+=(const Matrix& m) { for(uint32_t i=0;i<N*N;++i)_val[i]+=m.get(i); return *this; }
+        Matrix& operator-=(const Matrix& m) { for(uint32_t i=0;i<N*N;++i)_val[i]-=m.get(i); return *this; }
         Matrix& operator*=(const Matrix& m) { *this = *this*m; return *this; }
 
-        const Vector<T,N>& operator[](size_t i) const { return _mat[i]; }
-        Vector<T,N>& operator[](size_t i) { return _mat[i]; }
+        const Vector<T,N>& operator[](uint32_t i) const { return _mat[i]; }
+        Vector<T,N>& operator[](uint32_t i) { return _mat[i]; }
 
         bool operator<(const Matrix& m) const
         {
-            for(size_t i=0;i<N;++i)
+            for(uint32_t i=0;i<N;++i)
             {
                 if(_mat[i] < m._mat[i])
                     return true;
@@ -101,22 +101,22 @@ namespace tim
             return false;
         }
 
-        const T& get(size_t i) const { return _val[i]; }
-        T& get(size_t i) { return _val[i]; }
+        const T& get(uint32_t i) const { return _val[i]; }
+        T& get(uint32_t i) { return _val[i]; }
         const T* data() const { return _val; }
 
-        Matrix& setRow(const Vector<T,N>& row, size_t row_id) { for(size_t i=0;i<N;++i) _val[i*N+row_id]=row[i]; }
+        Matrix& setRow(const Vector<T,N>& row, uint32_t row_id) { for(uint32_t i=0;i<N;++i) _val[i*N+row_id]=row[i]; }
 
-        Matrix& transpose() { for(size_t i=0;i<N;++i)for(size_t j=0;j<i;++j)std::swap(_val[i*N+j], _val[j*N+i]); return *this; }
-        Matrix transposed() const { Matrix m; for(size_t i=0;i<N;++i)for(size_t j=0;j<N;++j)m.get(i*N+j)=_val[j*N+i]; return m; }
+        Matrix& transpose() { for(uint32_t i=0;i<N;++i)for(uint32_t j=0;j<i;++j)std::swap(_val[i*N+j], _val[j*N+i]); return *this; }
+        Matrix transposed() const { Matrix m; for(uint32_t i=0;i<N;++i)for(uint32_t j=0;j<N;++j)m.get(i*N+j)=_val[j*N+i]; return m; }
 
         Matrix& scale(const Vector<T,N-1>& v) { *this = scaled(v); return *this; }
         Matrix scaled(const Vector<T,N-1>& v) const { return *this * Scale(v); }
 
-        Vector<T,N-1> translation() const { Vector<T,N-1> res; for(size_t i=0;i<N-1;++i)res[i]=_val[i*N+N-1]; return res; }
-        Matrix& translate(const Vector<T,N-1>& v) { for(size_t i=0;i<N-1;++i)_val[i*N+N-1]+=v[i]; return *this; }
-        Matrix translated(const Vector<T,N-1>& v) const { Matrix m(*this); for(size_t i=0;i<N-1;++i)m.get(i*N+N-1)+=v[i]; return m; }
-        Matrix& setTranslation(const Vector<T,N-1>& v) { for(size_t i=0;i<N-1;++i)_val[i*N+N-1]=v[i]; return *this; }
+        Vector<T,N-1> translation() const { Vector<T,N-1> res; for(uint32_t i=0;i<N-1;++i)res[i]=_val[i*N+N-1]; return res; }
+        Matrix& translate(const Vector<T,N-1>& v) { for(uint32_t i=0;i<N-1;++i)_val[i*N+N-1]+=v[i]; return *this; }
+        Matrix translated(const Vector<T,N-1>& v) const { Matrix m(*this); for(uint32_t i=0;i<N-1;++i)m.get(i*N+N-1)+=v[i]; return m; }
+        Matrix& setTranslation(const Vector<T,N-1>& v) { for(uint32_t i=0;i<N-1;++i)_val[i*N+N-1]=v[i]; return *this; }
 
         T determinant() const
         {
@@ -156,32 +156,32 @@ namespace tim
         {
             Matrix inv;
             T invDet = 1.0f/determinant();
-            for(size_t i=0 ; i<N ; ++i)
-                for(size_t j=0 ; j<N ; ++j)
+            for(uint32_t i=0 ; i<N ; ++i)
+                for(uint32_t j=0 ; j<N ; ++j)
                     inv.get(j*N+i) = sub({i,j}).determinant() * (1-(int(i+j)%2)*2) * invDet;
             return inv;
         }
 
         Matrix& invert() { *this = this->inverted(); return *this; }
 
-        template<size_t A>
+        template<uint32_t A>
         Matrix<T,A> to() const
         {
             Matrix<T,A> m=Matrix<T,A>::IDENTITY();
-            for(size_t i=0;i<std::min(A,N);++i)for(size_t j=0;j<std::min(A,N);++j)
+            for(uint32_t i=0;i<std::min(A,N);++i)for(uint32_t j=0;j<std::min(A,N);++j)
                 m.get(i*A+j)=_val[i*N+j];
             return m;
         }
 
-        template<size_t A> Matrix<T,N+A> extend() const { return to<N+A>(); }
-        template<size_t A> Matrix<T,N-A> down() const { static_assert(N-A>1, "Can't create matrix of size less than 1."); return to<N-A>(); }
+        template<uint32_t A> Matrix<T,N+A> extend() const { return to<N+A>(); }
+        template<uint32_t A> Matrix<T,N-A> down() const { static_assert(N-A>1, "Can't create matrix of size less than 1."); return to<N-A>(); }
 
-        Matrix<T,N-1> sub(const Vector2<size_t>& v) const
+        Matrix<T,N-1> sub(const Vector2<uint32_t>& v) const
         {
             Matrix<T,N-1> m;
-            size_t c=0;
-            for(size_t i=0;i<N;++i)
-                for(size_t j=0;j<N;++j)
+            uint32_t c=0;
+            for(uint32_t i=0;i<N;++i)
+                for(uint32_t j=0;j<N;++j)
             {
                 if(i!=v.x() && j!=v.y())
                 {
@@ -203,7 +203,7 @@ namespace tim
         static const Matrix& IDENTITY()
         {
             T data[N*N]={0};
-            for(size_t i=0 ; i<N ; ++i) data[i*N+i]=1;
+            for(uint32_t i=0 ; i<N ; ++i) data[i*N+i]=1;
             static const Matrix identity(data);
             return identity;
         }
@@ -211,7 +211,7 @@ namespace tim
         static Matrix Scale(const Vector<T,N-1>& v)
         {
             Matrix m(Matrix::IDENTITY());
-            for(size_t i=0 ; i<N-1 ; ++i)
+            for(uint32_t i=0 ; i<N-1 ; ++i)
                 m.get(i*N+i)=v[i];
             return m;
         }
@@ -219,7 +219,7 @@ namespace tim
         static Matrix Translation(const Vector<T,N-1>& v)
         {
             Matrix m(Matrix::IDENTITY());
-            for(size_t i=0 ; i<N-1 ; ++i)
+            for(uint32_t i=0 ; i<N-1 ; ++i)
                 m.get(i*N+N-1)=v[i];
             return m;
         }
@@ -459,7 +459,7 @@ namespace tim
     typedef Matrix3<int> imat3;
     typedef Matrix2<int> imat2;
 
-    typedef Matrix4<size_t> uimat4;
-    typedef Matrix3<size_t> uimat3;
-    typedef Matrix2<size_t> uimat2;
+    typedef Matrix4<uint32_t> uimat4;
+    typedef Matrix3<uint32_t> uimat3;
+    typedef Matrix2<uint32_t> uimat2;
 }

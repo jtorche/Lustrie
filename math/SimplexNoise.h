@@ -62,7 +62,7 @@ namespace tim
 
         SimplexNoiseInstancer(typename SimplexNoise::Point initial = 1, typename SimplexNoise::Point coef = 2, int seed=42) : _initial(initial), _coef(coef), _seed(seed) {}
 
-        SimplexNoise operator()(uint layer) const
+        SimplexNoise operator()(uint32_t layer) const
         {
             typename SimplexNoise::Point scale = _initial * typename SimplexNoise::Point(_coef).apply([layer](float x) { return uipow(x, layer); });
             return SimplexNoise(scale, _seed+int(layer));

@@ -1,7 +1,7 @@
 
 #include "DX12Renderer.h"
 #include <memory>
-#include <core/Chrono.h>
+//#include <core/Chrono.h>
 #include <d3dcompiler.h>
 #include "core/Logger.h"
 
@@ -130,8 +130,20 @@ namespace dx12
 		_commandContext->commandList()->ClearRenderTargetView(targetBuffer[0], color[0], 0, nullptr);
 		_commandContext->commandList()->ClearDepthStencilView(depthBuffer[0], D3D12_CLEAR_FLAG_DEPTH, _depthBuffers[0].clearDepth(), 0, 0, nullptr);
 
-		CD3DX12_VIEWPORT viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(_rendererInfo.resolution.x()), static_cast<float>(_rendererInfo.resolution.y()));
-		CD3DX12_RECT rect = CD3DX12_RECT(0, 0, static_cast<LONG>(_rendererInfo.resolution.x()), static_cast<LONG>(_rendererInfo.resolution.y()));
+		D3D12_VIEWPORT viewport;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		viewport.Width = static_cast<float>(_rendererInfo.resolution.x());
+		viewport.Height = static_cast<float>(_rendererInfo.resolution.y());
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+
+		D3D12_RECT rect;
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = static_cast<LONG>(_rendererInfo.resolution.x());
+		rect.bottom = static_cast<LONG>(_rendererInfo.resolution.y());
+
 		_commandContext->commandList()->RSSetViewports(1, &viewport);
 		_commandContext->commandList()->RSSetScissorRects(1, &rect);
 
@@ -172,7 +184,7 @@ namespace dx12
 
 		_ASSERT(_indexInBuffer + object.size() <= MAX_INSTANCE);
 
-		for (size_t i = 0; i < object.size(); ++i)
+		for (uint32_t i = 0; i < object.size(); ++i)
 		{
 			_matrixBuffersPtr[_bufferIndex][_indexInBuffer + i] = object[i].tranform;
 			_materialBuffersPtr[_bufferIndex][_indexInBuffer + i].textures = object[i].parameter.textures;
@@ -197,7 +209,7 @@ namespace dx12
 		_commandContext->commandList()->IASetPrimitiveTopology(object[0].mesh->topology() == MeshBuffers::Triangles ? 
 			D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-		for (size_t i = 0; i < object.size(); ++i)
+		for (uint32_t i = 0; i < object.size(); ++i)
 		{
 			
 			auto mesh = object[i].mesh;
@@ -215,7 +227,7 @@ namespace dx12
 																1, mesh->offset(), 0, 0);
 		}
 
-		_indexInBuffer += object.size();
+		_indexInBuffer += (uint32_t)object.size();
 	}
 
 
@@ -273,7 +285,6 @@ namespace dx12
 			return {};
 
 		UINT i = 0;
-		size_t tmp;
 		IDXGIAdapter* adapter;
 		vector<AdapterInfo> descriptions;
 		while (factory->EnumAdapters(i, &adapter) != DXGI_ERROR_NOT_FOUND)
@@ -282,7 +293,7 @@ namespace dx12
 			adapter->GetDesc(&desc);
 
 			AdapterInfo info;
-			wcstombs_s(&tmp, info.name, 128, desc.Description, 128);
+			std::wcstombs(info.name, desc.Description, 128);
 			info.systemMemory = desc.DedicatedSystemMemory;
 			info.videoMemory = desc.DedicatedVideoMemory;
 			info.adapter = adapter;

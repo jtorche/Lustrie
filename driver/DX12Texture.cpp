@@ -8,17 +8,17 @@ using namespace tim;
 
 namespace dx12
 {
-	Texture::Texture(uivec2 res, uint numMips, DXGI_FORMAT format, const byte* data)
+	Texture::Texture(uivec2 res, uint32_t numMips, DXGI_FORMAT format, const byte* data)
 	{
 		create(res, numMips, format, data);
 	}
 
 	namespace
 	{
-		size_t bytesPerPixel(DXGI_FORMAT f) { return TextureBuffer::bitsPerPixel(f) / 8; }
+		uint32_t bytesPerPixel(DXGI_FORMAT f) { return TextureBuffer::bitsPerPixel(f) / 8; }
 	};
 
-	void Texture::create(uivec2 res, uint numMips, DXGI_FORMAT format, const byte* data)
+	void Texture::create(uivec2 res, uint32_t numMips, DXGI_FORMAT format, const byte* data)
 	{
 		D3D12_RESOURCE_DESC desc = describeTex2D(res, 1, numMips, format, D3D12_RESOURCE_FLAG_NONE);
 		desc.Format = format;
@@ -43,7 +43,7 @@ namespace dx12
 		CommandContext& commandlist = CommandContext::AllocContext(CommandQueue::COPY);
 
 		std::vector<D3D12_SUBRESOURCE_DATA> res(mips.size());
-		for (size_t i = 0; i < mips.size(); ++i)
+		for (uint32_t i = 0; i < mips.size(); ++i)
 		{
 			res[i].pData = mips[i];
 			res[i].RowPitch = (_size.x() >> i) * bytesPerPixel(_format);

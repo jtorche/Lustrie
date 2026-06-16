@@ -15,7 +15,7 @@ LTree::LTree(Parameter parameter, int seed) : _randEngine(seed), _random(0,1)
 
     parameter.nbTrunkStep = std::max(1, parameter.nbTrunkStep);
 
-    while(parameter.branchEarlyTermination.size() < size_t(parameter.depth))
+    while(parameter.branchEarlyTermination.size() < uint32_t(parameter.depth))
         parameter.branchEarlyTermination.push_back(parameter.branchEarlyTermination.empty() ? 0:parameter.branchEarlyTermination.back());
 
     GenParam detail;
@@ -284,9 +284,9 @@ void LTree::generateUVMeshRec(Node* node, UVMesh& mesh, int resolution, int dept
         generateUVMeshRec(child, mesh, resolution, 0);
 }
 
-uint LTree::generateLeafRec(const LeafParameter& leaf, Node* node, Mesh& acc) const
+uint32_t LTree::generateLeafRec(const LeafParameter& leaf, Node* node, Mesh& acc) const
 {
-    uint depth = 1 << 31;
+    uint32_t depth = 1 << 31;
     if(node->child)
     {
         depth = generateLeafRec(leaf, node->child, acc);
@@ -342,8 +342,8 @@ vec3 LTree::sampleSubCurve(float sample, Curve& curve, uivec2 range, vec3& dir, 
 {
     float x = float(range.x()) + (range.y() - range.x()) * sample;
 
-    uint ix  = uint(x);
-    uint ix2 = std::max<uint>(std::min<uint>(ix+1, range[1]), range[0]);
+    uint32_t ix  = uint32_t(x);
+    uint32_t ix2 = std::max<uint32_t>(std::min<uint32_t>(ix+1, range[1]), range[0]);
     x = fmodf(x, 1);
 
     dir = interpolate(curve.computeDirection(ix), curve.computeDirection(ix2), x);
@@ -473,7 +473,7 @@ LTree::MeshingParameter LTree::MeshingParameter::interpolate(const MeshingParame
 std::vector<float> LTree::Parameter::interpolate(const std::vector<float>& v1, const std::vector<float>& v2, float coef)
 {
 	std::vector<float> v = v1.size() > v2.size() ? v1 : v2;
-	for (size_t i = 0; i < std::min(v1.size(), v2.size()); ++i)
+	for (uint32_t i = 0; i < std::min(v1.size(), v2.size()); ++i)
 		v[i] = tim::interpolate(v1[i], v2[i], coef);
 
 	return v;
@@ -529,17 +529,17 @@ LTree::LeafParameter LTree::LeafParameter::gen(int seed, int sizeCategorie)
 	switch (sizeCategorie)
 	{
 	case 0:
-		param.scale = std::uniform_real_distribution<float>(0.1, 0.4)(gen);
+		param.scale = std::uniform_real_distribution<float>(0.1f, 0.4f)(gen);
 		param.density = std::uniform_real_distribution<float>(5, 10)(gen);
 		break;
 
 	case 1:
-		param.scale = std::uniform_real_distribution<float>(0.4, 0.7)(gen);
+		param.scale = std::uniform_real_distribution<float>(0.4f, 0.7f)(gen);
 		param.density = std::uniform_real_distribution<float>(3, 6)(gen);
 		break;
 
 	case 2:
-		param.scale = std::uniform_real_distribution<float>(0.7, 1.5)(gen);
+		param.scale = std::uniform_real_distribution<float>(0.7f, 1.5f)(gen);
 		param.density = std::uniform_real_distribution<float>(1,3)(gen);
 		break;
 	}

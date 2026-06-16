@@ -12,7 +12,7 @@ namespace dx12
 
 		const tim::vec4& clearColor() const;
 
-		void create(tim::uivec2 res, tim::uint numMips = 1, DXGI_FORMAT format = DXGI_FORMAT_D32_FLOAT);
+		void create(tim::uivec2 res, uint32_t numMips = 1, DXGI_FORMAT format = DXGI_FORMAT_D32_FLOAT);
 
 	private:
 		tim::vec4 _clearColor;

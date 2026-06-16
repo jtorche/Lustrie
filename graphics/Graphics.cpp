@@ -2,7 +2,7 @@
 #include <memory>
 #include "driver/DX12PipelineState.h"
 #include "PlanetSystem.h"
-#include <core/Chrono.h>
+//#include <core/Chrono.h>
 #include "geometry\Palette.h"
 #include "TextureGenerator.h"
 
@@ -41,7 +41,7 @@ bool Graphics::init(tim::ivec2 res, bool fullscreen, HWND handle)
 	// create default texture
 	ImageAlgorithm<float> dummyImg({ 32,32 });
 	dummyImg = dummyImg.map([](float) { return 0.f; });
-	for (uint i = 0; i < dummyImg.size().x(); ++i) for (uint j = 0; j < dummyImg.size().y(); ++j)
+	for (uint32_t i = 0; i < dummyImg.size().x(); ++i) for (uint32_t j = 0; j < dummyImg.size().y(); ++j)
 	{
 		dummyImg.set(i, j, (i^j) % 2 == 0 ? 0.3f : 1.f);
 	}
@@ -144,11 +144,11 @@ Material Graphics::createPointToTriangleGSForwardMaterial(const char* shaderSrc,
 ProxyTexture Graphics::createTextureWithMips(const tim::ImageAlgorithm<tim::bvec4>& img)
 {
 	auto mips = TextureGenerator::generateMips(img);
-	auto t = new dx12::Texture(img.size(), mips.size() + 1, DXGI_FORMAT_R8G8B8A8_UNORM);
+	auto t = new dx12::Texture(img.size(), (uint32_t)mips.size() + 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 	std::vector<const byte*> mips_data(mips.size() + 1);
 	mips_data[0] = reinterpret_cast<byte*>(img.data());
 
-	for (size_t i = 0; i < mips.size(); ++i)
+	for (uint32_t i = 0; i < mips.size(); ++i)
 		mips_data[i + 1] = reinterpret_cast<byte*>(mips[i].data());
 
 	t->upload(mips_data);

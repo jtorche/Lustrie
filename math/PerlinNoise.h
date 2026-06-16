@@ -8,7 +8,7 @@ namespace tim
     class PerlinNoise
     {
     public:
-        PerlinNoise(uint numLayer, uint firstLayerSize, int seed=42);
+        PerlinNoise(uint32_t numLayer, uint32_t firstLayerSize, int seed=42);
         ~PerlinNoise();
 
         PerlinNoise(const PerlinNoise&) = default;
@@ -20,7 +20,7 @@ namespace tim
         std::vector<ImageAlgorithm<float>> _layers;
 
     private:
-        static ImageAlgorithm<float> genNoise(uint, int seed, vec2 boundary = vec2(0,1));
+        static ImageAlgorithm<float> genNoise(uint32_t, int seed, vec2 boundary = vec2(0,1));
     };
 
 }

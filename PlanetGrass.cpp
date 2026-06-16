@@ -57,9 +57,9 @@ void PlanetGrass::prepare()
 
 		vec3 step1 = (dir1*2) / float(NB_SPLIT), step2 = (dir2*2) / float(NB_SPLIT);
 
-		for (uint i = 0; i < NB_SPLIT; ++i)
+		for (uint32_t i = 0; i < NB_SPLIT; ++i)
 		{
-			for (uint j = 0; j < NB_SPLIT; ++j)
+			for (uint32_t j = 0; j < NB_SPLIT; ++j)
 			{
 				_batchSide[side][i*NB_SPLIT + j].base1 = step1;
 				_batchSide[side][i*NB_SPLIT + j].base2 = step2;
@@ -125,16 +125,16 @@ void PlanetGrass::createMeshBuffers()
 	int sideIndex = 0;
 	for (auto& side : _batchSide)
 	{
-		std::array<uint, NB_SPLIT*NB_SPLIT> startIndexOffset;
-		std::array<uint, NB_SPLIT*NB_SPLIT> nbIndex;
+		std::array<uint32_t, NB_SPLIT*NB_SPLIT> startIndexOffset;
+		std::array<uint32_t, NB_SPLIT*NB_SPLIT> nbIndex;
 		Mesh sideMesh;
 
 		int indexBatch = 0;
-		uint indexAcc = 0;
+		uint32_t indexAcc = 0;
 		for (auto& batch : side)
 		{
 			startIndexOffset[indexBatch] = indexAcc;
-			nbIndex[indexBatch] = batch.vertex_normal.size();
+			nbIndex[indexBatch] = (uint32_t)batch.vertex_normal.size();
 
 			for (auto v_n : batch.vertex_normal)
 			{
@@ -142,7 +142,7 @@ void PlanetGrass::createMeshBuffers()
 				sideMesh.addVertexAndNormal(v_n.first, v_n.second);
 			}
 
-			indexAcc += batch.vertex_normal.size();
+			indexAcc += (uint32_t)batch.vertex_normal.size();
 			++indexBatch;
 			batch.vertex_normal.clear();
 		}

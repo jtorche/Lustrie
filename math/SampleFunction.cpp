@@ -41,8 +41,8 @@ float SampleFunction::operator()(float x) const
     x = std::min(std::max(x, 0.f), 1.f);
     x = float(_samples.size()-1) * x;
 
-    uint x1 = std::min(uint(x), _samples.size()-1);
-    uint x2 = std::min(uint(x+1), _samples.size()-1);
+    uint32_t x1 = std::min(uint32_t(x), (uint32_t)_samples.size() - 1u);
+    uint32_t x2 = std::min(uint32_t(x+1), (uint32_t)_samples.size() - 1u);
 
     x = fmodf(x, 1);
 
@@ -51,7 +51,7 @@ float SampleFunction::operator()(float x) const
 
 SampleFunction SampleFunction::interpolate(const SampleFunction& f1, const SampleFunction& f2, float coef)
 {	
-	uint nbPts = std::max(f1._samples.size(), f2._samples.size());
+	uint32_t nbPts = std::max((uint32_t)f1._samples.size(), (uint32_t)f2._samples.size());
 
 	if (nbPts == 0)
 		return SampleFunction();
@@ -59,7 +59,7 @@ SampleFunction SampleFunction::interpolate(const SampleFunction& f1, const Sampl
 		return SampleFunction({ tim::interpolate(f1(0.5f), f2(0.5f), coef) });
 	
 	SampleFunction result;
-	for (uint i = 0; i < nbPts; ++i)
+	for (uint32_t i = 0; i < nbPts; ++i)
 		result.addSample(tim::interpolate(f1(float(i) / (nbPts - 1)), f2(float(i) / (nbPts - 1)), coef));
 
 	return result;

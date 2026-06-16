@@ -38,12 +38,12 @@ struct ControlCamera
 
 		if (event.mouseDelta().x() != 0)
 		{
-			Quat rotUp = Quat::from_axis_angle(up, -event.mouseDelta().x() * time * 2);
+			Quat rotUp = Quat::from_axis_angle(up, -event.mouseDelta().x() * time * 8);
 			direction = rotUp(direction);
 		}
 		if (event.mouseDelta().y() != 0)
 		{
-			Quat rotOrtho = Quat::from_axis_angle(ortho, event.mouseDelta().y() * time * 2);
+			Quat rotOrtho = Quat::from_axis_angle(ortho, event.mouseDelta().y() * time * 8);
 			direction = rotOrtho(direction);
 		}
 	}

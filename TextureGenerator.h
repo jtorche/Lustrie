@@ -17,18 +17,18 @@ class TextureGenerator
 public:
 	TextureGenerator(int seed) : _seed(seed), _randEngine(seed), _random(0, 1) {}
 
-	tim::ImageAlgorithm<tim::bvec4> genGroundTexture(tim::uint res, const tim::Palette&);
-	tim::ImageAlgorithm<tim::bvec4> genGrassTexture(tim::uint res, const tim::Palette&);
-	tim::ImageAlgorithm<tim::bvec4> genTreeBarkTexture(tim::uint res, const tim::Palette&);
-	tim::ImageAlgorithm<tim::bvec4> genLeafTexture(tim::uint res, const tim::Palette&);
+	tim::ImageAlgorithm<tim::bvec4> genGroundTexture(uint32_t res, const tim::Palette&);
+	tim::ImageAlgorithm<tim::bvec4> genGrassTexture(uint32_t res, const tim::Palette&);
+	tim::ImageAlgorithm<tim::bvec4> genTreeBarkTexture(uint32_t res, const tim::Palette&);
+	tim::ImageAlgorithm<tim::bvec4> genLeafTexture(uint32_t res, const tim::Palette&);
 
-	tim::Palette randPalette(tim::uivec2 nbColorRange = { 2,5 }, tim::uint saturatedFrom = 2);
+	tim::Palette randPalette(tim::uivec2 nbColorRange = { 2,5 }, uint32_t saturatedFrom = 2);
 	tim::bvec4 randColor();
 	tim::vec4 randColorf();
 	
 	static void genWorleyNoise();
 
-	static std::vector<tim::ImageAlgorithm<tim::bvec4>> generateMips(const tim::ImageAlgorithm<tim::bvec4>&, tim::uint nbMips = 0);
+	static std::vector<tim::ImageAlgorithm<tim::bvec4>> generateMips(const tim::ImageAlgorithm<tim::bvec4>&, uint32_t nbMips = 0);
 
 	enum ColorBank : int
 	{ BROWN = 0, ORANGE, ORANGE2, GREEN, GREEN2, WHITE, PURPLE, PURPLE2, NB_COLOR };

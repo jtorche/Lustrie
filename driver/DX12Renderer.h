@@ -87,7 +87,7 @@ namespace dx12
 
 		CpuWritableBuffer _materialBuffers[NB_BUFFERS];
 		InstanceConstants* _materialBuffersPtr[NB_BUFFERS];
-		size_t _indexInBuffer;
+		uint32_t _indexInBuffer;
 
 		unsigned long long _fenceValue[NB_BUFFERS];
 

@@ -122,6 +122,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControlCamera.h" />
+    <ClInclude Include="core\Chrono.h" />
+    <ClInclude Include="core\ctpl_stl.h" />
+    <ClInclude Include="core\ImageAlgorithm.h" />
+    <ClInclude Include="core\Logger.h" />
+    <ClInclude Include="core\NonCopyable.h" />
+    <ClInclude Include="core\Singleton.h" />
+    <ClInclude Include="core\type.h" />
     <ClInclude Include="driver\DX12.h" />
     <ClInclude Include="driver\DX12Allocator.h" />
     <ClInclude Include="driver\DX12Buffer.h" />

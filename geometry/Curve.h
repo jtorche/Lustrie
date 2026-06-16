@@ -24,11 +24,11 @@ namespace tim
 
         void setClosed(bool);
         bool isClosed() const;
-        size_t numPoints() const;
-		vec3 point(uint) const;
-        float radius(uint) const;
+        uint32_t numPoints() const;
+		vec3 point(uint32_t) const;
+        float radius(uint32_t) const;
 
-		vec3 computeDirection(uint) const;
+		vec3 computeDirection(uint32_t) const;
 
         Curve& addPoint(vec3);
         Curve& addPoint(vec3, float);
@@ -36,13 +36,13 @@ namespace tim
         Mesh convertToWireMesh() const;
 
         template<class RadiusFun> // radiusFun(time, angle)
-        Mesh convertToMesh(const RadiusFun&,  uint resolution, bool mergeLast, bool triangle) const;
+        Mesh convertToMesh(const RadiusFun&,  uint32_t resolution, bool mergeLast, bool triangle) const;
 
         template<class RadiusFun> // radiusFun(time, angle)
-        UVMesh convertToUVMesh(const RadiusFun&,  uint resolution, bool mergeLast, bool triangle, bool uniform_uv = false) const;
+        UVMesh convertToUVMesh(const RadiusFun&,  uint32_t resolution, bool mergeLast, bool triangle, bool uniform_uv = false) const;
 
-        Mesh convertToMesh(uint resolution = 4, bool mergeLast = false, bool triangle = true) const;
-        UVMesh convertToUVMesh(uint resolution = 4, bool mergeLast = false, bool triangle = true, bool uniform_uv = false) const;
+        Mesh convertToMesh(uint32_t resolution = 4, bool mergeLast = false, bool triangle = true) const;
+        UVMesh convertToUVMesh(uint32_t resolution = 4, bool mergeLast = false, bool triangle = true, bool uniform_uv = false) const;
 
         template<class F1, class F2, class F3>
         static Curve parametrization(vec2 range, int numPoints, const F1&&, const F2&&, const F3&&);
@@ -52,24 +52,24 @@ namespace tim
         bool _closed = false;
 
     private:
-        static void tesselateCylindre(BaseMesh&, const std::vector<uint>& bottom, const std::vector<uint>& top, uint resolution, bool triangulate, bool cut);
-        static void tesselateCone(BaseMesh&, const std::vector<uint>& bottom, uint top, uint resolution, bool cut);
+        static void tesselateCylindre(BaseMesh&, const std::vector<uint32_t>& bottom, const std::vector<uint32_t>& top, uint32_t resolution, bool triangulate, bool cut);
+        static void tesselateCone(BaseMesh&, const std::vector<uint32_t>& bottom, uint32_t top, uint32_t resolution, bool cut);
 
         static void aligneCircle(const std::vector<std::pair<vec3,vec2>>&, std::vector<std::pair<vec3,vec2>>&);
 
         template<class RadiusFun, class TypeMesh>
-        TypeMesh convertToMesh(const RadiusFun&,  uint resolution, bool mergeLast, bool triangle, bool cut, bool uniform_uv=false) const;
+        TypeMesh convertToMesh(const RadiusFun&,  uint32_t resolution, bool mergeLast, bool triangle, bool cut, bool uniform_uv=false) const;
 	};
 
     inline void Curve::setClosed(bool b) { _closed = b; }
     inline bool Curve::isClosed() const { return _closed; }
 
-    inline size_t Curve::numPoints() const { return _points.size(); }
+    inline uint32_t Curve::numPoints() const { return (uint32_t)_points.size(); }
     inline Curve& Curve::addPoint(vec3 p) { _points.push_back(vec4(p,0)); return *this; }
     inline Curve& Curve::addPoint(vec3 p, float rad) { _points.push_back(vec4(p,rad)); return *this; }
 
-    inline vec3 Curve::point(uint index) const { if (index >= _points.size()) return vec3(); return _points[index].to<3>(); }
-    inline float Curve::radius(uint index) const { if (index >= _points.size()) return 0; return _points[index].w(); }
+    inline vec3 Curve::point(uint32_t index) const { if (index >= _points.size()) return vec3(); return _points[index].to<3>(); }
+    inline float Curve::radius(uint32_t index) const { if (index >= _points.size()) return 0; return _points[index].w(); }
 
     template<class F1, class F2, class F3>
     Curve Curve::parametrization(vec2 range, int numPoints, const F1&& f1, const F2&& f2, const F3&& f3)
@@ -85,13 +85,13 @@ namespace tim
     }
 
     template<class RadiusFun>
-    Mesh Curve::convertToMesh(const RadiusFun& fun,  uint resolution, bool mergeLast, bool triangle) const
+    Mesh Curve::convertToMesh(const RadiusFun& fun,  uint32_t resolution, bool mergeLast, bool triangle) const
     {
         return convertToMesh<RadiusFun, Mesh>(fun, resolution, mergeLast, triangle, false);
     }
 
     template<class RadiusFun>
-    UVMesh Curve::convertToUVMesh(const RadiusFun& fun,  uint resolution, bool mergeLast, bool triangle, bool uniform_uv) const
+    UVMesh Curve::convertToUVMesh(const RadiusFun& fun,  uint32_t resolution, bool mergeLast, bool triangle, bool uniform_uv) const
     {
         return convertToMesh<RadiusFun, UVMesh>(fun, resolution, mergeLast, triangle, true, uniform_uv);
     }
@@ -104,7 +104,7 @@ namespace tim
 	}
 
     template<class RadiusFun, class TypeMesh>
-    TypeMesh Curve::convertToMesh(const RadiusFun& fun,  uint resolution, bool mergeLast, bool triangle, bool cut, bool uniform_uv) const
+    TypeMesh Curve::convertToMesh(const RadiusFun& fun,  uint32_t resolution, bool mergeLast, bool triangle, bool cut, bool uniform_uv) const
     {
 		if (_closed)
 			mergeLast = false;
@@ -115,13 +115,13 @@ namespace tim
 			return mesh;
 
         float timeStep = 1.f / (_points.size()-1);
-        std::vector<std::vector<uint>> pointIndexes(_points.size(), std::vector<uint>(resolution+(cut ? 1:0)));
-		uint curIndex = 0;
+        std::vector<std::vector<uint32_t>> pointIndexes(_points.size(), std::vector<uint32_t>(resolution+(cut ? 1:0)));
+		uint32_t curIndex = 0;
 
         std::vector<std::pair<vec3,vec2>> prevPts;
         float accSizeCurve = 0;
 
-		for (size_t i = 0; i<_points.size() + 1; ++i)
+		for (uint32_t i = 0; i<_points.size() + 1; ++i)
 		{
 			if (i == _points.size() && !_closed)
 				break;
@@ -130,7 +130,7 @@ namespace tim
 			if (_closed)
                 dir = (_points[(i + 1) % _points.size()].to<3>() - _points[pmod(static_cast<int>(i) - 1, (int)_points.size())].to<3>());
 			else
-                dir = (_points[std::min(i + 1, _points.size() - 1)].to<3>() - _points[i == 0 ? 0 : i - 1].to<3>());
+                dir = (_points[std::min<uint32_t>(i + 1, (uint32_t)_points.size() - 1)].to<3>() - _points[i == 0 ? 0 : i - 1].to<3>());
 
             float sizeStep = dir.length();
             accSizeCurve += sizeStep;
@@ -144,7 +144,7 @@ namespace tim
 				{
                     std::vector<std::pair<vec3,vec2>> newPts;
                     float accAroundCurve=0;
-                    for (uint j = 0; j < resolution+(cut ? 1:0); ++j)
+                    for (uint32_t j = 0; j < resolution+(cut ? 1:0); ++j)
 					{
                         if(j < resolution)
                         {

@@ -9,7 +9,7 @@ struct Geometry
     Geometry() = delete;
 
     template<class MeshType = Mesh>
-    static MeshType generateCubeSphere(uint resolution, float radius=1, bool triangulate = false)
+    static MeshType generateCubeSphere(uint32_t resolution, float radius=1, bool triangulate = false)
     {
         MeshType plan = MeshType::generateGrid(vec2(1,1), {resolution, resolution}, ImageAlgorithm<float>(), 0, triangulate);
 		//plan.invertFaces();

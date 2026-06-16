@@ -14,7 +14,7 @@ namespace tim
     public:
         struct Parameter
         {
-            uint resX = 8;
+            uint32_t resX = 8;
             vec2 size = {1, 0.5f};
             float innerCurvature = 0.1f;
             float outerCurvature = 0.2f;

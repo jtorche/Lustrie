@@ -24,15 +24,15 @@ namespace dx12
 	// Various types of allocations may contain NULL pointers. 
 	struct DynAlloc
 	{
-		DynAlloc(BaseResource& baseResource, size_t offset, size_t size)
+		DynAlloc(BaseResource& baseResource, uint32_t offset, uint32_t size)
 			: buffer(baseResource), inBufferOffset(offset), sizeAlloc(size) {}
 
 		DynAlloc(DynAlloc&&) = default;
 		DynAlloc& operator=(DynAlloc&&) = default;
 
 		BaseResource& buffer;	// The buffer the allocation lies in.
-		size_t inBufferOffset;			
-		size_t sizeAlloc;			
+		uint32_t inBufferOffset;			
+		uint32_t sizeAlloc;			
 		void* dataPtr;			// The CPU-writeable address
 		D3D12_GPU_VIRTUAL_ADDRESS gpuAddress;	// The GPU-visible address
 	};
@@ -87,7 +87,7 @@ namespace dx12
 
 		LinearAllocatorPageManager();
 		LinearAllocationPage* requestPage();
-		LinearAllocationPage* createNewPage(size_t pageSize = 0);
+		LinearAllocationPage* createNewPage(uint32_t pageSize = 0);
 
 		// Discarded pages will get recycled.  This is for fixed size pages.
 		void discardPages(uint64_t fence, const std::vector<LinearAllocationPage*>& pages);
@@ -112,13 +112,13 @@ namespace dx12
 	{
 	public:
 
-		LinearAllocator(LinearAllocatorType type) : _allocatorType(type), _pageSize(0), _curOffset(~(size_t)0), _curPage(nullptr)
+		LinearAllocator(LinearAllocatorType type) : _allocatorType(type), _pageSize(0), _curOffset(~(uint32_t)0), _curPage(nullptr)
 		{
 			_pageSize = (type == GpuExclusive ? LinearAllocatorPageManager::GpuAllocatorPageSize :
 				                                LinearAllocatorPageManager::CpuAllocatorPageSize);
 		}
 
-		DynAlloc allocate(size_t SizeInBytes, size_t Alignment = DEFAULT_ALIGN);
+		DynAlloc allocate(uint32_t SizeInBytes, uint32_t Alignment = DEFAULT_ALIGN);
 
 		void cleanup(uint64_t FenceID);
 
@@ -129,13 +129,13 @@ namespace dx12
 		}
 
 	private:
-		DynAlloc allocateLargePage(size_t sizeInBytes);
+		DynAlloc allocateLargePage(uint32_t sizeInBytes);
 
 		static LinearAllocatorPageManager _pageManager[2];
 
 		LinearAllocatorType _allocatorType;
-		size_t _pageSize;
-		size_t _curOffset;
+		uint32_t _pageSize;
+		uint32_t _curOffset;
 		LinearAllocationPage* _curPage;
 
 		std::vector<LinearAllocationPage*> _retiredPages;

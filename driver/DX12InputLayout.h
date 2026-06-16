@@ -112,7 +112,7 @@ namespace dx12
 			setupName();
 		}
 
-		UINT getNum() const { return _layout.size(); }
+		UINT getNum() const { return (UINT)_layout.size(); }
 
 		const D3D12_INPUT_ELEMENT_DESC* getLayout() const { return _layout.data();  }
 
@@ -130,7 +130,7 @@ namespace dx12
 
 		void setupName()
 		{
-			for (size_t i = 0; i < _layout.size(); ++i)
+			for (uint32_t i = 0; i < _layout.size(); ++i)
 				_layout[i].SemanticName = _names[i].c_str();
 		}
 	};

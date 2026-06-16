@@ -38,7 +38,7 @@ namespace tim
             int nbTrunkStep = 4;
             GaussPDF trunkAngle = vec2(0,10);
             GaussPDF trunkStepSize = vec2(1, 1);
-            GaussPDF trunkStepSizeDecay = vec2(0.9, 1);
+            GaussPDF trunkStepSizeDecay = vec2(0.9f, 1);
 
             int depth = 4;
             float curveResolution = 0;
@@ -46,11 +46,11 @@ namespace tim
             GaussPDF branchAngle = vec2(10,40);
             GaussPDF firstBranchAngleCoef = vec2(1,1);
             std::vector<float> branchSplitDensity = {0,1,1};
-            std::vector<float> branchEarlyTermination = {0,0,0,0.5};
+            std::vector<float> branchEarlyTermination = {0,0,0,0.5f};
             float branchSplitNoise = 0.5f;
 
             float initialBranchSize = 0.5f;
-            GaussPDF branchSizeDecay = vec2(0.7, 0.7);
+            GaussPDF branchSizeDecay = vec2(0.7f, 0.7f);
             GaussPDF branchSizeCoef = vec2(1,1);
             float branchSizeStopThreshold = 0.2f;
             SampleFunction branchSizeAlongTrunk={1};
@@ -79,7 +79,7 @@ namespace tim
         struct LeafParameter
         {
             BaseMesh leaf;
-            uint depth = 0;
+            uint32_t depth = 0;
             GaussPDF density = 3;
             GaussPDF orientation = vec2(-PI/2, PI/2);
             GaussPDF tilt = vec2(-PI/4, PI/4);
@@ -148,7 +148,7 @@ namespace tim
 
         Node* generateBranchRec(const Parameter&, Node* parent, vec3 position, vec3 direction, GenParam detailParam);
 
-        uint generateLeafRec(const LeafParameter&, Node*, Mesh&) const;
+        uint32_t generateLeafRec(const LeafParameter&, Node*, Mesh&) const;
 
         static vec3 sampleSubCurve(float sample, Curve& curve, uivec2 range, vec3& dir, float& thickness);
 
@@ -168,7 +168,7 @@ namespace tim
     {
         float x = _random(_randEngine);
         float acc = 0;
-        for(size_t i=0 ; i<density.size() ; ++i)
+        for(uint32_t i=0 ; i<density.size() ; ++i)
         {
             acc += density[i];
             if(x < acc) return int(i);

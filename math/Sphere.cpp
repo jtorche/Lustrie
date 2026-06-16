@@ -74,11 +74,11 @@ std::string Sphere::str() const
     return str;
 }*/
 
-Sphere Sphere::computeSphere(const float* ptr, uint size, uint stride)
+Sphere Sphere::computeSphere(const float* ptr, uint32_t size, uint32_t stride)
 {
     vec3 minV = vec3::construct(std::numeric_limits<float>::max()), maxV = vec3::construct(std::numeric_limits<float>::min());
 
-    for(uint i=0 ; i<size ; ++i)
+    for(uint32_t i=0 ; i<size ; ++i)
     {
         for(int j=0 ; j<3 ; ++j)
         {
@@ -91,7 +91,7 @@ Sphere Sphere::computeSphere(const float* ptr, uint size, uint stride)
     //center = {0,0,0};
 
     float minD = 0;
-    for(uint i=0 ; i<size ; ++i)
+    for(uint32_t i=0 ; i<size ; ++i)
     {
         vec3 v = {ptr[i*stride], ptr[i*stride+1], ptr[i*stride+2]};
         minD = std::max(minD, (v-center).length());

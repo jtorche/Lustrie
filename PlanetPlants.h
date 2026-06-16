@@ -12,7 +12,7 @@ public:
 	void cull(const tim::Camera&, std::vector<ObjectInstance>&, std::vector<ObjectInstance>&);
 
 	void createTree(int sizeCategorie, int number);
-	void populatePlant(Planet&, size_t plantIndex, int nbInstance);
+	void populatePlant(Planet&, uint32_t plantIndex, int nbInstance);
 
 private:
 	int _seed;
@@ -38,7 +38,7 @@ private:
 	{
 		tim::mat4 transform;
 		MaterialParameter material[2];
-		size_t indexPlant;
+		uint32_t indexPlant;
 	};
 
 	std::vector<Instance> _instances;

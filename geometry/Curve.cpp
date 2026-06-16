@@ -12,32 +12,32 @@ namespace tim
 
 
         mesh._vertices.resize(_points.size());
-        for(size_t i=0 ; i<_points.size() ; ++i)
+        for(uint32_t i=0 ; i<_points.size() ; ++i)
             mesh._vertices[i] = _points[i].to<3>();
 
-        for(size_t i=0 ; i<_points.size()-1 ; ++i)
+        for(uint32_t i=0 ; i<_points.size()-1 ; ++i)
             mesh.addFace(Mesh::Face({{i,i+1,0,0}, 2}));
 
         if(_closed)
-            mesh.addFace(Mesh::Face({{_points.size()-1,0,0,0}, 2}));
+            mesh.addFace(Mesh::Face({{ (uint32_t)_points.size() - 1, 0, 0, 0 }, 2}));
 
         return mesh;
     }
 
-    Mesh Curve::convertToMesh(uint resolution, bool mergeLast, bool triangle) const
+    Mesh Curve::convertToMesh(uint32_t resolution, bool mergeLast, bool triangle) const
     {
         return convertToMesh([this](float,float,int index){ return _points[index].w(); }, resolution, mergeLast, triangle);
     }
 
-    UVMesh Curve::convertToUVMesh(uint resolution, bool mergeLast, bool triangle, bool uniform_uv) const
+    UVMesh Curve::convertToUVMesh(uint32_t resolution, bool mergeLast, bool triangle, bool uniform_uv) const
     {
         return convertToUVMesh([this](float,float,int index){ return _points[index].w(); }, resolution, mergeLast, triangle, uniform_uv);
     }
 
-    void Curve::tesselateCylindre(BaseMesh& mesh, const std::vector<uint>& bottom, const std::vector<uint>& top, uint resolution, bool triangulate, bool cut)
+    void Curve::tesselateCylindre(BaseMesh& mesh, const std::vector<uint32_t>& bottom, const std::vector<uint32_t>& top, uint32_t resolution, bool triangulate, bool cut)
     {
-        const uint res_mod = resolution + (cut ? 1:0);
-        for(uint i=0 ; i<resolution ; ++i)
+        const uint32_t res_mod = resolution + (cut ? 1:0);
+        for(uint32_t i=0 ; i<resolution ; ++i)
         {
             if(triangulate)
             {
@@ -52,14 +52,14 @@ namespace tim
         }
     }
 
-    void Curve::tesselateCone(BaseMesh& mesh, const std::vector<uint>& bottom, uint top, uint resolution, bool cut)
+    void Curve::tesselateCone(BaseMesh& mesh, const std::vector<uint32_t>& bottom, uint32_t top, uint32_t resolution, bool cut)
     {
-        const uint res_mod = resolution + (cut ? 1:0);
-        for(uint i=0 ; i<resolution ; ++i)
+        const uint32_t res_mod = resolution + (cut ? 1:0);
+        for(uint32_t i=0 ; i<resolution ; ++i)
             mesh.addFace({{bottom[i%res_mod], top, bottom[(i+1)%res_mod], 0}, 3});
     }
 
-	vec3 Curve::computeDirection(uint index) const
+	vec3 Curve::computeDirection(uint32_t index) const
 	{
 		if (_points.size() <= 1 || index >= _points.size())
 			return vec3();

@@ -33,17 +33,17 @@ namespace tim
         };
 
         void buildCameraFrustum(const Camera&,
-                                size_t maskPlanDiscard=0);
+                                uint32_t maskPlanDiscard=0);
 
         void buildCameraFrustum(const mat4& invProjView,
-                                size_t maskPlanDiscard=0);
+                                uint32_t maskPlanDiscard=0);
 
         void buildOrthoFrustum(float l, float r, float b, float t, float n, float f,
                                 const mat4& viewMat,
-                                size_t maskPlanDiscard=0);
+                                uint32_t maskPlanDiscard=0);
 
         void buildOrthoFrustum(float l, float r, float b, float t, float n, float f,
-                                const vec3&, const vec3&, const vec3&, size_t maskPlanDiscard=0);
+                                const vec3&, const vec3&, const vec3&, uint32_t maskPlanDiscard=0);
 
         void add(const Plan&);
         const Plan& plan(int) const;

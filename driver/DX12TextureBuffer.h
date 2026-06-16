@@ -15,11 +15,11 @@ namespace dx12
 		DXGI_FORMAT format() const;
 		const tim::uivec3& size() const;
 
-		static size_t bitsPerPixel(DXGI_FORMAT);
+		static uint32_t bitsPerPixel(DXGI_FORMAT);
 
 	protected:
 		tim::uivec3 _size;
-		tim::uint _numMips;
+		uint32_t _numMips;
 		DXGI_FORMAT _format;
 
 		D3D12_RESOURCE_DESC describeTex2D(tim::uivec2 size, uint32_t depthOrArraySize, uint32_t numMips, DXGI_FORMAT format, UINT flags);

@@ -21,7 +21,7 @@ namespace tim
     public:
         struct Face
         {
-            std::array<uint,4> indexes; // support quads triangles, lines and points
+            std::array<uint32_t,4> indexes; // support quads triangles, lines and points
             int nbIndexes;
         };
 
@@ -44,14 +44,14 @@ namespace tim
         template<class T> BaseMesh& mapVertices(const T&);
         template<class T> BaseMesh& mapNormals(const T&);
 
-        uint nbVertices() const;
-		uint nbFaces() const;
-        vec3 position(uint) const;
+        uint32_t nbVertices() const;
+		uint32_t nbFaces() const;
+        vec3 position(uint32_t) const;
 
 		const vec3* vertexData() const;
-		std::vector<uint> indexData(uint nbPointsInFace = 3) const;
+		std::vector<uint32_t> indexData(uint32_t nbPointsInFace = 3) const;
 
-		size_t requestBufferSize(bool withNormal = true, bool withUv = false) const;
+		uint32_t requestBufferSize(bool withNormal = true, bool withUv = false) const;
 		void fillBuffer(void*, bool withNormal = true, bool withUv = false) const;
 
         void clearFaces();
@@ -67,8 +67,8 @@ namespace tim
 
 		static void computeJoinNormals(std::vector<BaseMesh*>&, int smooth = 0);
 
-		vec3 vertex(uint) const;
-		vec3 normal(uint) const;
+		vec3 vertex(uint32_t) const;
+		vec3 normal(uint32_t) const;
 
 		Sphere computeBoundingSphere();
 		
@@ -78,26 +78,26 @@ namespace tim
         std::vector<vec3> _normals;
         std::vector<vec2> _texCoords;
 
-        std::vector<std::vector<uint>> _vertexToFaces; // for each vertex, we know the faces the vertex is in
+        std::vector<std::vector<uint32_t>> _vertexToFaces; // for each vertex, we know the faces the vertex is in
 
         void buildVertexFaceMap(bool useRealPosition);
 
    private:
-        std::ofstream& writeVertex(std::ofstream&, uint) const;
+        std::ofstream& writeVertex(std::ofstream&, uint32_t) const;
 
-        vec3 faceNormal(uint) const;
+        vec3 faceNormal(uint32_t) const;
 
 	protected:
 		static void generateGrid(BaseMesh&, vec2 size, uivec2 resolution, const ImageAlgorithm<float>&, float Zscale, bool withUV, bool triangulate);
 	};
 
     inline BaseMesh& BaseMesh::addFace(const Face& face) { _faces.push_back(face); return *this; }
-    inline uint BaseMesh::nbVertices() const { return _vertices.size(); }
-	inline uint BaseMesh::nbFaces() const { return _faces.size(); }
+    inline uint32_t BaseMesh::nbVertices() const { return (uint32_t)_vertices.size(); }
+	inline uint32_t BaseMesh::nbFaces() const { return (uint32_t)_faces.size(); }
 	inline const vec3* BaseMesh::vertexData() const { return _vertices.data(); }
 
-	inline vec3 BaseMesh::vertex(uint index) const { return _vertices[index]; }
-	inline vec3 BaseMesh::normal(uint index) const { return _normals[index]; }
+	inline vec3 BaseMesh::vertex(uint32_t index) const { return _vertices[index]; }
+	inline vec3 BaseMesh::normal(uint32_t index) const { return _normals[index]; }
 
     template<class T> BaseMesh& BaseMesh::mapVertices(const T& tr)
     {

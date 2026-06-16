@@ -35,7 +35,13 @@ namespace dx12
 
 	void TextureBuffer::create(ID3D12Device* device, const D3D12_RESOURCE_DESC& desc, const D3D12_CLEAR_VALUE* clearValue, D3D12_GPU_VIRTUAL_ADDRESS)
 	{
-		CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_DEFAULT);
+		D3D12_HEAP_PROPERTIES heapProps = {};
+		heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+		heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapProps.CreationNodeMask = 1;
+		heapProps.VisibleNodeMask = 1;
+
 		auto ret = device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_COMMON, 
 												   clearValue, IID_PPV_ARGS(_resource.GetAddressOf()));
 
@@ -218,7 +224,7 @@ namespace dx12
 		device->CreateDepthStencilView(_resource.Get(), &dsvDesc, _DSV_descritpor[1].cpuHandle());
 	}
 
-	size_t TextureBuffer::bitsPerPixel(DXGI_FORMAT fmt)
+	uint32_t TextureBuffer::bitsPerPixel(DXGI_FORMAT fmt)
 	{
 		switch (fmt)
 		{

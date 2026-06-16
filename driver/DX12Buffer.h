@@ -9,12 +9,12 @@ namespace dx12
 		BufferBase() = default;
 		BufferBase(uint32_t numElements, uint32_t elemSize) : _bufferSize(numElements*elemSize), _elemCount(numElements), _elemSize(elemSize) {}
 
-		size_t bufferSize() const { return _bufferSize; }
+		uint32_t bufferSize() const { return _bufferSize; }
 		uint32_t elemCount() const { return _elemCount; }
 		uint32_t elemSize() const { return _elemSize; }
 
 	protected:
-		size_t _bufferSize = 0;
+		uint32_t _bufferSize = 0;
 		uint32_t _elemCount = 0;
 		uint32_t _elemSize = 0;
 	};

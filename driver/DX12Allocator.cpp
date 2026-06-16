@@ -74,7 +74,7 @@ namespace dx12
 		}
 	}
 
-	LinearAllocationPage* LinearAllocatorPageManager::createNewPage(size_t pageSize)
+	LinearAllocationPage* LinearAllocatorPageManager::createNewPage(uint32_t pageSize)
 	{
 		D3D12_HEAP_PROPERTIES heapProps;
 		heapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -143,7 +143,7 @@ namespace dx12
 		_largePageList.clear();
 	}
 
-	DynAlloc LinearAllocator::allocateLargePage(size_t sizeInBytes)
+	DynAlloc LinearAllocator::allocateLargePage(uint32_t sizeInBytes)
 	{
 		LinearAllocationPage* newPage = _pageManager[_allocatorType].createNewPage(sizeInBytes);
 		_largePageList.push_back(newPage);
@@ -157,21 +157,21 @@ namespace dx12
 
 	namespace
 	{
-		size_t alignUpWithMask(size_t value, size_t mask)
+		uint32_t alignUpWithMask(uint32_t value, uint32_t mask)
 		{
 			return (value + mask) & ~mask;
 		}
 	};
 
-	DynAlloc LinearAllocator::allocate(size_t sizeInBytes, size_t alignment)
+	DynAlloc LinearAllocator::allocate(uint32_t sizeInBytes, uint32_t alignment)
 	{
-		const size_t AlignmentMask = alignment - 1;
+		const uint32_t AlignmentMask = alignment - 1;
 
 		// Assert that it's a power of two.
 		_ASSERT((AlignmentMask & alignment) == 0);
 
 		// Align the allocation
-		const size_t AlignedSize = alignUpWithMask(sizeInBytes, AlignmentMask);
+		const uint32_t AlignedSize = alignUpWithMask(sizeInBytes, AlignmentMask);
 
 		if (AlignedSize > _pageSize)
 			return allocateLargePage(AlignedSize);

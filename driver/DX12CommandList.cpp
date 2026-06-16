@@ -71,7 +71,7 @@ namespace dx12
 		_list->CopyResource(dest.resource(), src.resource());
 	}
 
-	void CommandContext::copySubBuffer(Resource& dest, size_t destOffset, Resource& src, size_t srcOffset, size_t numBytes)
+	void CommandContext::copySubBuffer(Resource& dest, uint32_t destOffset, Resource& src, uint32_t srcOffset, uint32_t numBytes)
 	{
 		resourceBarrier(dest, D3D12_RESOURCE_STATE_COPY_DEST);
 		resourceBarrier(src, D3D12_RESOURCE_STATE_COPY_SOURCE); // maybe useless
@@ -86,14 +86,14 @@ namespace dx12
 		_list->CopyResource(dest.resource(), src.resource());
 	}
 
-	void CommandContext::copySubBuffer(Resource& dest, size_t destOffset, CpuWritableBuffer& src, size_t srcOffset, size_t numBytes)
+	void CommandContext::copySubBuffer(Resource& dest, uint32_t destOffset, CpuWritableBuffer& src, uint32_t srcOffset, uint32_t numBytes)
 	{
 		resourceBarrier(dest, D3D12_RESOURCE_STATE_COPY_DEST, true);
 		//resourceBarrier(src, D3D12_RESOURCE_STATE_COPY_SOURCE); // maybe useless
 		_list->CopyBufferRegion(dest.resource(), destOffset, src.resource(), srcOffset, numBytes);
 	}
 
-	void CommandContext::initBuffer(Resource& dest, const void* data, size_t numBytes, size_t offset)
+	void CommandContext::initBuffer(Resource& dest, const void* data, uint32_t numBytes, uint32_t offset)
 	{
 		DynAlloc alloc = _cpuAllocator.allocate(numBytes);
 		memcpy(alloc.dataPtr, data, numBytes);
@@ -102,15 +102,86 @@ namespace dx12
 		_list->CopyBufferRegion(dest.resource(), offset, alloc.buffer.resource(), alloc.inBufferOffset, numBytes);
 	}
 
-	void  CommandContext::initTexture(Texture& dest, const std::vector<D3D12_SUBRESOURCE_DATA>& subresource)
+	void CommandContext::initTexture(Texture& dest, const std::vector<D3D12_SUBRESOURCE_DATA>& subresource)
 	{
-		UINT64 uploadBufferSize = GetRequiredIntermediateSize(dest.resource(), 0, subresource.size());
+		// UINT64 uploadBufferSize = GetRequiredIntermediateSize(dest.resource(), 0, subresource.size());
+		// 
+		// DynAlloc mem = _cpuAllocator.allocate((uint32_t)uploadBufferSize);
+		// UpdateSubresources(_list, dest.resource(), mem.buffer.resource(), 0, 0, (UINT)subresource.size(), const_cast<D3D12_SUBRESOURCE_DATA*>(&subresource[0]));
 
-		DynAlloc mem = _cpuAllocator.allocate((size_t)uploadBufferSize);
-		UpdateSubresources(_list, dest.resource(), mem.buffer.resource(), 0, 0, (UINT)subresource.size(), const_cast<D3D12_SUBRESOURCE_DATA*>(&subresource[0]));
+		ID3D12Device* device = nullptr;
+		dest.resource()->GetDevice(IID_PPV_ARGS(&device));
+
+		UINT64 uploadBufferSize = 0;
+
+		D3D12_RESOURCE_DESC desc = dest.resource()->GetDesc();
+
+		device->GetCopyableFootprints(
+			&desc,
+			0,
+			static_cast<UINT>(subresource.size()),
+			0,
+			nullptr,
+			nullptr,
+			nullptr,
+			&uploadBufferSize);
+
+		device->Release();
+
+		DynAlloc mem = _cpuAllocator.allocate(
+			static_cast<uint32_t>(uploadBufferSize));
+
+		// Copy texture data into upload heap
+		std::vector<D3D12_PLACED_SUBRESOURCE_FOOTPRINT> layouts(subresource.size());
+		std::vector<UINT> numRows(subresource.size());
+		std::vector<UINT64> rowSizes(subresource.size());
+
+		device->GetCopyableFootprints(
+			&desc,
+			0,
+			static_cast<UINT>(subresource.size()),
+			0,
+			layouts.data(),
+			numRows.data(),
+			rowSizes.data(),
+			nullptr);
+
+		BYTE* mappedData;
+		mem.buffer.resource()->Map(0, nullptr, reinterpret_cast<void**>(&mappedData));
+
+		for (UINT i = 0; i < subresource.size(); ++i)
+		{
+			BYTE* dstSlice = mappedData + layouts[i].Offset;
+			const BYTE* srcSlice = static_cast<const BYTE*>(subresource[i].pData);
+
+			for (UINT row = 0; row < numRows[i]; ++row)
+			{
+				memcpy(
+					dstSlice + row * layouts[i].Footprint.RowPitch,
+					srcSlice + row * subresource[i].RowPitch,
+					static_cast<size_t>(rowSizes[i]));
+			}
+		}
+
+		mem.buffer.resource()->Unmap(0, nullptr);
+
+		for (UINT i = 0; i < subresource.size(); ++i)
+		{
+			D3D12_TEXTURE_COPY_LOCATION dst = {};
+			dst.pResource = dest.resource();
+			dst.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+			dst.SubresourceIndex = i;
+
+			D3D12_TEXTURE_COPY_LOCATION src = {};
+			src.pResource = mem.buffer.resource();
+			src.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+			src.PlacedFootprint = layouts[i];
+
+			_list->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+		}
 	}
 
-	DynAlloc CommandContext::allocWritableBuffer(size_t numBytes)
+	DynAlloc CommandContext::allocWritableBuffer(uint32_t numBytes)
 	{
 		return _cpuAllocator.allocate(numBytes);
 	}
